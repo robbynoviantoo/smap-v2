@@ -31,7 +31,7 @@ export default function SignInForm() {
       await login({
         email,
         password,
-        device_name: typeof window !== "undefined" ? window.navigator.userAgent : "web-browser",
+        device_name: "nextjs-web",
       });
     } catch (err: any) {
       const msg =
