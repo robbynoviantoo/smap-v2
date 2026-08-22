@@ -1,4 +1,4 @@
-import { Outfit } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import "flatpickr/dist/flatpickr.css";
 import { SidebarProvider } from '@/context/SidebarContext';
@@ -14,8 +14,9 @@ export const metadata: Metadata = {
   },
 };
 
-const outfit = Outfit({
+const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
 });
 
 export default function RootLayout({
@@ -25,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${outfit.className} dark:bg-gray-900`}>
+      <body className={`${inter.className} dark:bg-gray-900 font-sans antialiased text-gray-800 dark:text-gray-200`}>
         <QueryProvider>
           <ThemeProvider>
             <SidebarProvider>{children}</SidebarProvider>

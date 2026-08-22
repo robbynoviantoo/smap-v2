@@ -330,7 +330,7 @@ export default function AppSidebar() {
             <>
               <Image
                 className="dark:hidden"
-                src="/images/logo/logo-1.svg"
+                src="/images/logo/pertamina-light.svg"
                 alt="PERTAMINA SMAP"
                 width={160}
                 height={42}

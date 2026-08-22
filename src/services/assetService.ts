@@ -6,9 +6,12 @@ export interface AssetFilterParams {
   page?: number;
   q?: string;
   category?: string;
+  sub_category?: string;
+  merk?: string;
   status?: string;
   available_status?: string;
   location?: string;
+  building?: string;
   sort_by?: string;
   sort_order?: 'asc' | 'desc';
 }
@@ -32,6 +35,7 @@ export const assetService = {
   async getMetadata() {
     const res = await apiClient.get<ApiResponse<{
       categories: string[];
+      sub_categories: string[];
       locations: string[];
       buildings: string[];
       merks: string[];
