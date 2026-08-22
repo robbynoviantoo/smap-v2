@@ -28,6 +28,21 @@ export function useAuth() {
     mutationFn: authService.login,
     onSuccess: (data) => {
       queryClient.setQueryData(['auth', 'me'], { success: true, message: 'OK', data: data.data.user });
+      
+      // Jika user baru pertama kali login, arahkan ke halaman onboarding (ganti password)
+      if (data.data.user?.is_first_login) {
+        router.push('/onboarding');
+      } else {
+        router.push('/');
+      }
+    },
+  });
+
+  // Mutation: Onboarding (Ganti Password Pertama Kali)
+  const onboardingMutation = useMutation({
+    mutationFn: authService.completeOnboarding,
+    onSuccess: (data) => {
+      queryClient.setQueryData(['auth', 'me'], { success: true, message: 'OK', data: data.data });
       router.push('/');
     },
   });
@@ -45,12 +60,15 @@ export function useAuth() {
     user: userResponse?.data,
     isLoading,
     isAuthenticated: !!userResponse?.data,
+    isFirstLogin: !!userResponse?.data?.is_first_login,
     isError,
     error,
     refetchUser: refetch,
     login: loginMutation.mutateAsync,
     isLoggingIn: loginMutation.isPending,
     loginError: loginMutation.error,
+    completeOnboarding: onboardingMutation.mutateAsync,
+    isOnboarding: onboardingMutation.isPending,
     logout: logoutMutation.mutateAsync,
     isLoggingOut: logoutMutation.isPending,
   };

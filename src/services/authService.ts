@@ -29,6 +29,17 @@ export const authService = {
     return res.data;
   },
 
+  async completeOnboarding(data: {
+    first_name: string;
+    last_name?: string;
+    no_handphone?: string;
+    password?: string;
+    password_confirmation?: string;
+  }) {
+    const res = await apiClient.post<ApiResponse<User>>('/onboarding', data);
+    return res.data;
+  },
+
   async logout() {
     try {
       await apiClient.post('/auth/logout');
