@@ -10,8 +10,35 @@ export default function PwaProvider({ children }: { children: React.ReactNode })
     // 1. Register Service Worker for PWA & Background Push
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
+        // Construct dynamic query params from env variables to keep sw.js free of hardcoded secrets
+        const params = new URLSearchParams();
+        if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+          params.set('apiKey', process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
+        }
+        if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN) {
+          params.set('authDomain', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
+        }
+        if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+          params.set('projectId', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+        }
+        if (process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET) {
+          params.set('storageBucket', process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
+        }
+        if (process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID) {
+          params.set('messagingSenderId', process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID);
+        }
+        if (process.env.NEXT_PUBLIC_FIREBASE_APP_ID) {
+          params.set('appId', process.env.NEXT_PUBLIC_FIREBASE_APP_ID);
+        }
+        if (process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID) {
+          params.set('measurementId', process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID);
+        }
+
+        const queryString = params.toString();
+        const swUrl = queryString ? `/sw.js?${queryString}` : '/sw.js';
+
         navigator.serviceWorker
-          .register('/sw.js')
+          .register(swUrl)
           .then((registration) => {
             console.log('[PWA] Service Worker registered with scope:', registration.scope);
           })

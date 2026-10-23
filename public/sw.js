@@ -1,18 +1,21 @@
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
-const firebaseConfig = {
-    apiKey: "AIzaSyCEJYmA5E_zcjcwHGupFmqKPQPqG4Xzgc0",
-    authDomain: "smap-pertamina.firebaseapp.com",
-    projectId: "smap-pertamina",
-    storageBucket: "smap-pertamina.firebasestorage.app",
-    messagingSenderId: "1045919862891",
-    appId: "1:1045919862891:web:a8ab55b45b52916d36612e",
-    measurementId: "G-MVCLGGDH5B"
-};
+// ============================================================
+// Parse Firebase configuration dynamically from query parameters
+// Prevents exposing sensitive credentials in git-tracked files
+// ============================================================
+const searchParams = new URLSearchParams(self.location.search);
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+const firebaseConfig = {
+    apiKey: searchParams.get('apiKey') || '',
+    authDomain: searchParams.get('authDomain') || '',
+    projectId: searchParams.get('projectId') || '',
+    storageBucket: searchParams.get('storageBucket') || '',
+    messagingSenderId: searchParams.get('messagingSenderId') || '',
+    appId: searchParams.get('appId') || '',
+    measurementId: searchParams.get('measurementId') || ''
+};
 
 // ============================================================
 // Helper to show a notification (single source of truth)
@@ -27,29 +30,30 @@ function showSmapNotification(title, body, badge_count) {
         icon: '/logo-pwa.png',
         badge: '/logo-pwa.png',
         vibrate: [200, 100, 200],
-        tag: 'smap-approval', // Replaces previous notification — no duplicates
-        renotify: true,       // Still rings/vibrates even if replacing same tag
+        tag: 'smap-approval',
+        renotify: true,
         data: { url: self.location.origin + '/' },
     });
 }
 
-// ============================================================
-// Firebase onBackgroundMessage
-// This is the PRIMARY handler. Firebase SDK intercepts the
-// raw push event first, so we handle it here.
-// ============================================================
-messaging.onBackgroundMessage((payload) => {
-    console.log('[sw.js] Background message:', payload);
+// Initialize Firebase only when credentials are provided
+if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+    try {
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
 
-    // Title and body now come from payload.data (not payload.notification)
-    // because we intentionally removed the top-level 'notification' key
-    // from the FCM payload to prevent Chrome's auto-display on Android.
-    const title = payload.data?.title || payload.notification?.title || 'SMAP';
-    const body = payload.data?.body || payload.notification?.body || 'Ada pengajuan baru.';
-    const badge_count = parseInt(payload.data?.badge_count || 0);
+        messaging.onBackgroundMessage((payload) => {
+            console.log('[sw.js] Background message:', payload);
+            const title = payload.data?.title || payload.notification?.title || 'SMAP';
+            const body = payload.data?.body || payload.notification?.body || 'Ada pengajuan baru.';
+            const badge_count = parseInt(payload.data?.badge_count || 0);
 
-    return showSmapNotification(title, body, badge_count);
-});
+            return showSmapNotification(title, body, badge_count);
+        });
+    } catch (err) {
+        console.warn('[sw.js] Firebase initialization error:', err);
+    }
+}
 
 // ============================================================
 // notificationclick — opens app on tap
