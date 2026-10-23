@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface TablePaginationProps {
   currentPage: number;
@@ -25,6 +26,7 @@ export default function TablePagination({
   onPerPageChange,
   isLoading = false,
 }: TablePaginationProps) {
+  const { t, locale } = useTranslation();
   if (total === 0) return null;
 
   // Generate page numbers with ellipses
@@ -65,14 +67,20 @@ export default function TablePagination({
       {/* Left: Info Text & Per Page Selector */}
       <div className="flex flex-wrap items-center gap-3 text-gray-500 dark:text-gray-400">
         <span>
-          Menampilkan <strong className="font-semibold text-gray-800 dark:text-gray-200">{from ?? ((currentPage - 1) * perPage + 1)}</strong> sampai{" "}
-          <strong className="font-semibold text-gray-800 dark:text-gray-200">{to ?? Math.min(currentPage * perPage, total)}</strong> dari{" "}
-          <strong className="font-semibold text-gray-800 dark:text-gray-200">{total}</strong> data
+          {locale === 'en' ? 'Showing ' : 'Menampilkan '}
+          <strong className="font-semibold text-gray-800 dark:text-gray-200">{from ?? ((currentPage - 1) * perPage + 1)}</strong>
+          {locale === 'en' ? ' to ' : ' hingga '}
+          <strong className="font-semibold text-gray-800 dark:text-gray-200">{to ?? Math.min(currentPage * perPage, total)}</strong>
+          {locale === 'en' ? ' of ' : ' dari '}
+          <strong className="font-semibold text-gray-800 dark:text-gray-200">{total}</strong>
+          {locale === 'en' ? ' results' : ' data'}
         </span>
 
         {onPerPageChange && (
           <div className="flex items-center gap-1.5 ml-2">
-            <label htmlFor="per-page-select" className="text-gray-400">Baris:</label>
+            <label htmlFor="per-page-select" className="text-gray-400">
+              {locale === 'en' ? 'Rows:' : 'Baris:'}
+            </label>
             <select
               id="per-page-select"
               value={perPage}

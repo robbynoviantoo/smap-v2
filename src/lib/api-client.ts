@@ -29,7 +29,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      Cookies.remove('token');
+      Cookies.remove('token', { path: '/' });
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         // Jika bukan di halaman signin, bisa redirect

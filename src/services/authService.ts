@@ -6,7 +6,7 @@ export const authService = {
   async login(credentials: { email: string; password: string; device_name?: string }) {
     const res = await apiClient.post<ApiResponse<LoginResponse>>('/auth/login', credentials);
     if (res.data.success && res.data.data.token) {
-      Cookies.set('token', res.data.data.token, { expires: 30 }); // 30 hari
+      Cookies.set('token', res.data.data.token, { expires: 30, path: '/' }); // 30 hari
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', res.data.data.token);
       }
@@ -24,7 +24,9 @@ export const authService = {
     return res.data;
   },
 
-  async updateProfile(data: Partial<User>) {
+  async updateProfile(
+    data: Partial<User> & { password?: string; password_confirmation?: string }
+  ) {
     const res = await apiClient.put<ApiResponse<User>>('/profile', data);
     return res.data;
   },
@@ -44,7 +46,7 @@ export const authService = {
     try {
       await apiClient.post('/auth/logout');
     } finally {
-      Cookies.remove('token');
+      Cookies.remove('token', { path: '/' });
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
       }

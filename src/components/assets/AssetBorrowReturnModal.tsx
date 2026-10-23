@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { Asset } from "@/types/api";
+import { useTranslation } from "@/context/LanguageContext";
 import { ArrowUpRight, RotateCcw, X } from "lucide-react";
 
 interface AssetBorrowReturnModalProps {
@@ -23,6 +24,7 @@ export default function AssetBorrowReturnModal({
   onSubmit,
   isLoading = false,
 }: AssetBorrowReturnModalProps) {
+  const { t } = useTranslation();
   const [remark, setRemark] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -44,7 +46,7 @@ export default function AssetBorrowReturnModal({
   };
 
   return (
-    <div className="fixed inset-0 z-99999 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
 
@@ -56,7 +58,7 @@ export default function AssetBorrowReturnModal({
               {isBorrow ? <ArrowUpRight className="w-5 h-5" /> : <RotateCcw className="w-5 h-5" />}
             </div>
             <h3 className="text-base font-bold text-gray-900 dark:text-white">
-              {isBorrow ? "Form Peminjaman Aset" : "Form Pengembalian Aset"}
+              {isBorrow ? t("assets.borrow_modal_title") : t("assets.return_modal_title")}
             </h3>
           </div>
           <button
@@ -70,8 +72,8 @@ export default function AssetBorrowReturnModal({
 
         <div className="p-3 bg-gray-50 dark:bg-gray-800/40 rounded-xl mb-4 text-xs space-y-1">
           <p className="font-bold text-gray-800 dark:text-gray-200">{asset.name}</p>
-          <p className="text-gray-500 font-mono">No. Aset: {asset.no_asset || "-"}</p>
-          <p className="text-gray-500">Lokasi: {asset.location || "-"}</p>
+          <p className="text-gray-500 font-mono">{t("assets.table_no_asset")}: {asset.no_asset || "-"}</p>
+          <p className="text-gray-500">{t("assets.table_location")}: {asset.location || "-"}</p>
         </div>
 
         {errorMsg && (
@@ -83,7 +85,7 @@ export default function AssetBorrowReturnModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label>
-              {isBorrow ? "Keperluan Peminjaman" : "Keterangan Kondisi Pengembalian"} <span className="text-red-500">*</span>
+              {isBorrow ? t("assets.borrow_purpose") : t("assets.return_notes")} <span className="text-red-500">*</span>
             </Label>
             <textarea
               rows={3}
@@ -102,10 +104,10 @@ export default function AssetBorrowReturnModal({
               onClick={onClose}
               className="px-3.5 py-2 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 rounded-lg transition cursor-pointer"
             >
-              Batal
+              {t("common.cancel")}
             </button>
             <Button size="sm" disabled={isLoading}>
-              {isLoading ? "Memproses..." : isBorrow ? "Ajukan Peminjaman" : "Konfirmasi Pengembalian"}
+              {isLoading ? t("common.processing") : isBorrow ? t("assets.btn_borrow") : t("assets.btn_return")}
             </Button>
           </div>
         </form>

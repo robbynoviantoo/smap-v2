@@ -67,4 +67,33 @@ export const assetService = {
     const res = await apiClient.post<ApiResponse<any>>(`/assets/${id}/returned`, { remark });
     return res.data;
   },
+
+  async scheduleMaintenance(id: number | string, next_maintenance_date: string) {
+    const res = await apiClient.post<ApiResponse<any>>(`/maintenances/assets/${id}/schedule`, {
+      next_maintenance_date,
+    });
+    return res.data;
+  },
+
+  async startMaintenance(id: number | string, notes: string) {
+    const res = await apiClient.post<ApiResponse<any>>(`/maintenances/assets/${id}/start`, {
+      notes,
+    });
+    return res.data;
+  },
+
+  async finishMaintenance(
+    id: number | string,
+    data: { notes: string; next_maintenance_date?: string }
+  ) {
+    const res = await apiClient.post<ApiResponse<any>>(`/maintenances/assets/${id}/finish`, data);
+    return res.data;
+  },
+
+  async getMaintenanceHistory(assetId: number | string) {
+    const res = await apiClient.get<ApiResponse<any>>('/maintenances', {
+      params: { asset_id: assetId },
+    });
+    return res.data;
+  },
 };

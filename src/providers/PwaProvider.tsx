@@ -1,0 +1,39 @@
+'use client';
+
+import React, { useEffect } from 'react';
+import apiClient from '@/lib/api-client';
+
+export default function PwaProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // 1. Register Service Worker for PWA & Background Push
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/sw.js')
+          .then((registration) => {
+            console.log('[PWA] Service Worker registered with scope:', registration.scope);
+          })
+          .catch((err) => {
+            console.warn('[PWA] Service Worker registration failed:', err);
+          });
+      });
+    }
+
+    // 2. Request Notification Permission & Sync Token if granted
+    if ('Notification' in window && Notification.permission === 'default') {
+      // Gentle delayed request so it doesn't block initial page load
+      const timer = setTimeout(() => {
+        Notification.requestPermission().then((permission) => {
+          if (permission === 'granted') {
+            console.log('[PWA] Notification permission granted.');
+          }
+        });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  return <>{children}</>;
+}

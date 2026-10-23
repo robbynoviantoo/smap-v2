@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import QRCode from "react-qr-code";
 import { Asset } from "@/types/api";
 import { TableSkeleton } from "@/components/common/Skeleton";
+import { useTranslation } from "@/context/LanguageContext";
 import {
   ChevronDown,
   Eye,
@@ -35,6 +36,7 @@ export default function AssetTableView({
   onBorrow,
   onReturn,
 }: AssetTableViewProps) {
+  const { t } = useTranslation();
   const [openRows, setOpenRows] = useState<Record<string, boolean>>({});
 
   const toggleRow = (name: string) => {
@@ -75,13 +77,13 @@ export default function AssetTableView({
       <table className="w-full text-xs text-left">
         <thead className="bg-gray-50 dark:bg-gray-800/60 border-b border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 font-semibold select-none">
           <tr>
-            <th className="px-4 py-3">Nama Aset</th>
-            <th className="px-4 py-3">Kategori</th>
+            <th className="px-4 py-3">{t("assets.table_name")}</th>
+            <th className="px-4 py-3">{t("assets.table_category")}</th>
             <th className="px-4 py-3">Sub Kategori</th>
-            <th className="px-4 py-3">Lokasi (Gedung)</th>
-            <th className="px-4 py-3">Kondisi Unit</th>
+            <th className="px-4 py-3">{t("assets.table_location")}</th>
+            <th className="px-4 py-3">{t("assets.table_condition")}</th>
             <th className="px-4 py-3 text-center">Total Unit</th>
-            <th className="px-4 py-3 text-center">Aksi / Rincian</th>
+            <th className="px-4 py-3 text-center">{t("common.actions")}</th>
           </tr>
         </thead>
 
@@ -120,17 +122,17 @@ export default function AssetTableView({
                     <div className="flex items-center gap-1 flex-wrap">
                       {goodCount > 0 && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                          {goodCount} Baik
+                          {goodCount} {t("assets.status_good")}
                         </span>
                       )}
                       {maintCount > 0 && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-                          {maintCount} Maint
+                          {maintCount} {t("assets.status_maintenance")}
                         </span>
                       )}
                       {brokenCount > 0 && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
-                          {brokenCount} Rusak
+                          {brokenCount} {t("assets.status_broken")}
                         </span>
                       )}
                     </div>
@@ -144,7 +146,7 @@ export default function AssetTableView({
 
                   <td className="px-4 py-3.5 text-center font-medium text-brand-600 dark:text-brand-400">
                     <span className="text-[11px] hover:underline">
-                      {isOpen ? "Tutup Rincian" : "Buka Rincian"}
+                      {isOpen ? t("common.close") : t("common.details")}
                     </span>
                   </td>
                 </tr>
@@ -194,7 +196,7 @@ export default function AssetTableView({
                                           : "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300"
                                       }`}
                                     >
-                                      {item.status === "good" ? "Baik" : item.status === "maintenance" ? "Maintenance" : "Rusak"}
+                                      {item.status === "good" ? t("assets.status_good") : item.status === "maintenance" ? t("assets.status_maintenance") : t("assets.status_broken")}
                                     </span>
 
                                     <span
@@ -204,12 +206,12 @@ export default function AssetTableView({
                                           : "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
                                       }`}
                                     >
-                                      {isAvailable ? "Available" : "Dipinjam"}
+                                      {isAvailable ? t("assets.avail_available") : t("assets.avail_borrowed")}
                                     </span>
                                   </div>
 
                                   <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
-                                    Lokasi: {item.location || "-"} {item.building && `(${item.building})`} | Merk: {item.merk || "-"}
+                                    {t("assets.table_location")}: {item.location || "-"} {item.building && `(${item.building})`} | {t("assets.brand")}: {item.merk || "-"}
                                   </p>
                                 </div>
                               </div>
@@ -225,7 +227,7 @@ export default function AssetTableView({
                                     className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-300 rounded-lg text-[11px] font-semibold hover:bg-blue-100 transition cursor-pointer"
                                   >
                                     <ArrowUpRight className="w-3 h-3" />
-                                    <span>Pinjam</span>
+                                    <span>{t("assets.btn_borrow")}</span>
                                   </button>
                                 ) : (
                                   <button
@@ -237,7 +239,7 @@ export default function AssetTableView({
                                     className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/30 dark:border-green-800 dark:text-green-300 rounded-lg text-[11px] font-semibold hover:bg-green-100 transition cursor-pointer"
                                   >
                                     <RotateCcw className="w-3 h-3" />
-                                    <span>Kembalikan</span>
+                                    <span>{t("assets.btn_return")}</span>
                                   </button>
                                 )}
 
@@ -250,7 +252,7 @@ export default function AssetTableView({
                                   className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 border border-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 rounded-lg text-[11px] font-semibold hover:bg-gray-200 transition cursor-pointer"
                                 >
                                   <Eye className="w-3 h-3" />
-                                  <span>Detail</span>
+                                  <span>{t("common.details")}</span>
                                 </button>
 
                                 <button
@@ -262,7 +264,7 @@ export default function AssetTableView({
                                   className="inline-flex items-center gap-1 px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 dark:bg-brand-900/30 dark:text-brand-300 dark:border-brand-800 rounded-lg text-[11px] font-semibold hover:bg-brand-100 transition cursor-pointer"
                                 >
                                   <Edit2 className="w-3 h-3" />
-                                  <span>Edit</span>
+                                  <span>{t("common.edit")}</span>
                                 </button>
 
                                 <button
@@ -274,7 +276,7 @@ export default function AssetTableView({
                                   className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 rounded-lg text-[11px] font-semibold hover:bg-red-100 transition cursor-pointer"
                                 >
                                   <Trash2 className="w-3 h-3" />
-                                  <span>Hapus</span>
+                                  <span>{t("common.delete")}</span>
                                 </button>
                               </div>
                             </div>

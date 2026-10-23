@@ -3,6 +3,7 @@
 import React from "react";
 import { Asset } from "@/types/api";
 import { CardSkeleton } from "@/components/common/Skeleton";
+import { useTranslation } from "@/context/LanguageContext";
 import {
   QrCode,
   MapPin,
@@ -37,6 +38,8 @@ export default function AssetGridView({
   onBorrow,
   onReturn,
 }: AssetGridViewProps) {
+  const { t } = useTranslation();
+
   if (isLoading) {
     return <CardSkeleton count={8} />;
   }
@@ -45,7 +48,7 @@ export default function AssetGridView({
     return (
       <div className="py-16 text-center text-gray-400 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
         <PackageSearch className="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
-        <p className="text-xs">Tidak ada data aset yang ditemukan.</p>
+        <p className="text-xs">{t("common.no_data")}</p>
       </div>
     );
   }
@@ -85,7 +88,7 @@ export default function AssetGridView({
                         : "bg-red-600/90 text-white"
                     }`}
                   >
-                    {asset.status === "good" ? "Baik" : asset.status === "maintenance" ? "Maintenance" : "Rusak"}
+                    {asset.status === "good" ? t("assets.status_good") : asset.status === "maintenance" ? t("assets.status_maintenance") : t("assets.status_broken")}
                   </span>
                 </div>
 
@@ -95,7 +98,7 @@ export default function AssetGridView({
                       isAvailable ? "bg-blue-600/90 text-white" : "bg-amber-600/90 text-white"
                     }`}
                   >
-                    {isAvailable ? "Available" : "Dipinjam"}
+                    {isAvailable ? t("assets.avail_available") : t("assets.avail_borrowed")}
                   </span>
                 </div>
               </div>
@@ -141,7 +144,7 @@ export default function AssetGridView({
                     className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 rounded-lg transition"
                   >
                     <ArrowUpRight className="w-3 h-3" />
-                    <span>Pinjam</span>
+                    <span>{t("assets.btn_borrow")}</span>
                   </button>
                 ) : (
                   <button
@@ -150,7 +153,7 @@ export default function AssetGridView({
                     className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-green-700 bg-green-50 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-300 rounded-lg transition"
                   >
                     <RotateCcw className="w-3 h-3" />
-                    <span>Kembalikan</span>
+                    <span>{t("assets.btn_return")}</span>
                   </button>
                 )}
 
@@ -160,7 +163,7 @@ export default function AssetGridView({
                   className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-300 rounded-lg transition"
                 >
                   <Edit2 className="w-3 h-3" />
-                  <span>Edit</span>
+                  <span>{t("common.edit")}</span>
                 </button>
 
                 <button
@@ -169,7 +172,7 @@ export default function AssetGridView({
                   className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 rounded-lg transition"
                 >
                   <Trash2 className="w-3 h-3" />
-                  <span>Hapus</span>
+                  <span>{t("common.delete")}</span>
                 </button>
               </div>
             </div>

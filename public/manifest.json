@@ -1,0 +1,25 @@
+{
+    "name": "Pertamina HSE TC",
+    "short_name": "SMAP",
+    "description": "Pertamina HSE Training Center Management System",
+    "start_url": "/",
+    "scope": "/",
+    "background_color": "#6777ef",
+    "theme_color": "#6777ef",
+    "display": "standalone",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/logo-pwa.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/logo-pwa.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

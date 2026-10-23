@@ -6,10 +6,12 @@ import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useAuth } from "@/hooks/api/useAuth";
+import { useTranslation } from "@/context/LanguageContext";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout, isLoggingOut } = useAuth();
+  const { t } = useTranslation();
 
   function toggleDropdown(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
@@ -108,7 +110,7 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Profile Settings
+              {t('nav.user_profile')}
             </DropdownItem>
           </li>
         </ul>
@@ -132,7 +134,7 @@ export default function UserDropdown() {
               fill=""
             />
           </svg>
-          {isLoggingOut ? "Signing out..." : "Sign out"}
+          {isLoggingOut ? (t('auth.signing_out') || 'Signing out...') : (t('auth.sign_out') || 'Sign out')}
         </button>
       </Dropdown>
     </div>

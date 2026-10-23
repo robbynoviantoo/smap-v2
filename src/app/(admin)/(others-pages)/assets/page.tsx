@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useAssets } from "@/hooks/api/useAssets";
 import { assetService } from "@/services/assetService";
 import { Asset } from "@/types/api";
+import { useTranslation } from "@/context/LanguageContext";
 import AssetTableView from "@/components/assets/AssetTableView";
 import AssetGridView from "@/components/assets/AssetGridView";
 import AssetFilters from "@/components/assets/AssetFilters";
@@ -14,6 +15,7 @@ import AssetBorrowReturnModal from "@/components/assets/AssetBorrowReturnModal";
 import AssetBulkReturnModal from "@/components/assets/AssetBulkReturnModal";
 import AssetBulkPrintQrModal from "@/components/assets/AssetBulkPrintQrModal";
 import AssetImportModal from "@/components/assets/AssetImportModal";
+import AssetMaintenanceModal, { MaintenanceMode } from "@/components/assets/AssetMaintenanceModal";
 import TablePagination from "@/components/common/TablePagination";
 import alert from "@/lib/alert";
 import apiClient from "@/lib/api-client";
@@ -30,6 +32,7 @@ import {
 } from "lucide-react";
 
 export default function AssetsPage() {
+  const { t, locale } = useTranslation();
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -59,6 +62,29 @@ export default function AssetsPage() {
   const [isBulkReturnOpen, setIsBulkReturnOpen] = useState(false);
   const [isBulkPrintOpen, setIsBulkPrintOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
+
+  // Maintenance Management Modal State
+  const [isMaintenanceOpen, setIsMaintenanceOpen] = useState(false);
+  const [maintenanceMode, setMaintenanceMode] = useState<MaintenanceMode>("schedule");
+  const [selectedAssetForMaintenance, setSelectedAssetForMaintenance] = useState<Asset | null>(null);
+
+  const handleOpenScheduleMaintenance = (asset: Asset) => {
+    setSelectedAssetForMaintenance(asset);
+    setMaintenanceMode("schedule");
+    setIsMaintenanceOpen(true);
+  };
+
+  const handleOpenStartMaintenance = (asset: Asset) => {
+    setSelectedAssetForMaintenance(asset);
+    setMaintenanceMode("start");
+    setIsMaintenanceOpen(true);
+  };
+
+  const handleOpenFinishMaintenance = (asset: Asset) => {
+    setSelectedAssetForMaintenance(asset);
+    setMaintenanceMode("finish");
+    setIsMaintenanceOpen(true);
+  };
 
   // TanStack Query: Fetch Assets with active filters and pagination
   const {
@@ -250,10 +276,10 @@ export default function AssetsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-            Manajemen Data Aset
+            {t("assets.page_title")}
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Kelola inventaris, barcode scanner, peminjaman, dan pemeliharaan unit aset PERTAMINA.
+            {t("assets.page_subtitle")}
           </p>
         </div>
       </div>
@@ -267,7 +293,7 @@ export default function AssetsPage() {
             <div className="relative flex-1">
               <input
                 type="text"
-                placeholder="Cari nama, no. aset, kategori, atau merk..."
+                placeholder={t("assets.search_placeholder")}
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full h-10 pl-9 pr-4 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/60 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-brand-500/20"
@@ -286,7 +312,7 @@ export default function AssetsPage() {
               }`}
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>Filter</span>
+              <span>{t("common.filter")}</span>
               {(category || status || location || merk) && (
                 <span className="w-2 h-2 rounded-full bg-brand-500"></span>
               )}
@@ -302,7 +328,7 @@ export default function AssetsPage() {
               className="h-10 px-3 text-xs font-semibold rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 flex items-center gap-1.5 transition cursor-pointer shadow-xs"
             >
               <Upload className="w-3.5 h-3.5 text-gray-600 dark:text-gray-300" />
-              <span className="hidden sm:inline">Import</span>
+              <span className="hidden sm:inline">{t("common.import")}</span>
             </button>
 
             {/* Export Button */}
@@ -312,7 +338,7 @@ export default function AssetsPage() {
               className="h-10 px-3 text-xs font-semibold rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700 flex items-center gap-1.5 transition cursor-pointer shadow-xs"
             >
               <Download className="w-3.5 h-3.5 text-gray-600 dark:text-gray-300" />
-              <span className="hidden sm:inline">Export</span>
+              <span className="hidden sm:inline">{t("common.export")}</span>
             </button>
 
             {/* Print QR Button */}
@@ -322,7 +348,7 @@ export default function AssetsPage() {
               className="h-10 px-3 text-xs font-semibold rounded-xl border border-purple-200 bg-purple-50/80 hover:bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:border-purple-800 dark:text-purple-300 flex items-center gap-1.5 transition cursor-pointer shadow-xs"
             >
               <Printer className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-              <span className="hidden md:inline">Print QR</span>
+              <span className="hidden md:inline">{t("assets.bulk_print_qr")}</span>
             </button>
 
             {/* Bulk Return Button */}
@@ -332,7 +358,7 @@ export default function AssetsPage() {
               className="h-10 px-3 text-xs font-semibold rounded-xl border border-orange-200 bg-orange-50/80 hover:bg-orange-100 text-orange-700 dark:bg-orange-950/30 dark:border-orange-800 dark:text-orange-300 flex items-center gap-1.5 transition cursor-pointer shadow-xs"
             >
               <RotateCcw className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
-              <span className="hidden md:inline">Bulk Return</span>
+              <span className="hidden md:inline">{t("assets.bulk_return")}</span>
             </button>
 
             {/* View Mode Toggle (Grid vs Table) */}
@@ -345,7 +371,7 @@ export default function AssetsPage() {
                     ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-xs"
                     : "text-gray-500 hover:text-gray-800 dark:hover:text-white"
                 }`}
-                title="Tampilan Grid"
+                title={t("assets.view_grid")}
               >
                 <LayoutGrid className="w-4 h-4" />
               </button>
@@ -357,7 +383,7 @@ export default function AssetsPage() {
                     ? "bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 shadow-xs"
                     : "text-gray-500 hover:text-gray-800 dark:hover:text-white"
                 }`}
-                title="Tampilan Tabel"
+                title={t("assets.view_table")}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -370,7 +396,7 @@ export default function AssetsPage() {
               className="h-10 px-4 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-xl shadow-md transition shadow-brand-500/20 flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>Create Asset</span>
+              <span>{t("assets.add_asset")}</span>
             </button>
           </div>
         </div>
@@ -460,6 +486,28 @@ export default function AssetsPage() {
         onOpenQr={handleOpenQr}
         onBorrow={handleOpenBorrow}
         onReturn={handleOpenReturn}
+        onScheduleMaintenance={handleOpenScheduleMaintenance}
+        onStartMaintenance={handleOpenStartMaintenance}
+        onFinishMaintenance={handleOpenFinishMaintenance}
+      />
+
+      <AssetMaintenanceModal
+        isOpen={isMaintenanceOpen}
+        mode={maintenanceMode}
+        asset={selectedAssetForMaintenance}
+        onClose={() => setIsMaintenanceOpen(false)}
+        onSuccess={() => {
+          refetch();
+          if (
+            selectedAssetForDetail &&
+            selectedAssetForMaintenance &&
+            selectedAssetForDetail.id === selectedAssetForMaintenance.id
+          ) {
+            assetService.getAssetById(selectedAssetForDetail.id).then((res) => {
+              if (res.data) setSelectedAssetForDetail(res.data);
+            });
+          }
+        }}
       />
 
       <AssetQrModal

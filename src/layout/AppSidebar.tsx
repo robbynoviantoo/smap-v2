@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "@/hooks/api/useAuth";
+import { useTranslation } from "@/context/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api-client";
 import {
@@ -54,6 +55,7 @@ export default function AppSidebar() {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   // Query live pending badge count
   const { data: pendingData } = useQuery({
@@ -72,76 +74,76 @@ export default function AppSidebar() {
   const pendingBorrowCount = pendingData?.borrow || 0;
   const totalPending = pendingData?.total || 0;
 
-  // Struktur Menu Sama Persis seperti App\Helpers\MenuHelper.php
+  // Struktur Menu Sama Persis seperti App\Helpers\MenuHelper.php dengan dukungan i18n
   const menuGroups: MenuGroup[] = [
     {
       title: "Menu",
       items: [
         {
-          name: "Dashboard",
+          name: t("nav.dashboard"),
           icon: <GridIcon />,
-          subItems: [{ name: "Summary Data", path: "/" }],
+          subItems: [{ name: t("nav.summary_data"), path: "/" }],
         },
         {
-          name: "Calendar",
+          name: t("nav.calendar"),
           icon: <CalenderIcon />,
           path: "/calendar",
         },
         {
-          name: "Data",
+          name: t("nav.data"),
           icon: <TableIcon />,
           subItems: [
-            { name: "Asset", path: "/assets" },
-            { name: "Pengadaan", path: "/pengadaan-assets" },
+            { name: t("nav.assets"), path: "/assets" },
+            { name: t("nav.procurement"), path: "/pengadaan-assets" },
           ],
         },
         {
-          name: "Souvenir",
+          name: t("nav.souvenir"),
           icon: <BoxCubeIcon />,
           subItems: [
             {
-              name: "Nama Souvenir",
+              name: t("nav.souvenir_names"),
               path: "/souvenirs/names",
               roles: ["admin-souvenir", "superadmin"],
             },
             {
-              name: "Stok Souvenir",
+              name: t("nav.souvenir_stock"),
               path: "/souvenirs",
               roles: ["admin-souvenir", "superadmin"],
             },
             {
-              name: "Transaksi Souvenir",
+              name: t("nav.souvenir_transactions"),
               path: "/souvenirs/transactions",
             },
           ],
         },
         {
-          name: "Approval",
+          name: t("nav.approval"),
           icon: <CheckCircleIcon />,
           ping: totalPending > 0,
           count: totalPending,
           roles: ["admin-approve", "superadmin"],
           subItems: [
             {
-              name: "Approval Input Asset",
+              name: t("nav.approval_asset"),
               path: "/approvals/asset-pendings",
               ping: pendingAssetCount > 0,
               count: pendingAssetCount,
             },
             {
-              name: "Approval Request Asset",
+              name: t("nav.approval_pengadaan"),
               path: "/approvals/pengadaan-pendings",
               ping: pendingPengadaanCount > 0,
               count: pendingPengadaanCount,
             },
             {
-              name: "Approval Maintenance",
+              name: t("nav.approval_maintenance"),
               path: "/approvals/maintenance-pendings",
               ping: pendingMaintenanceCount > 0,
               count: pendingMaintenanceCount,
             },
             {
-              name: "Approval Borrow",
+              name: t("nav.approval_borrow"),
               path: "/approvals/borrow-pendings",
               ping: pendingBorrowCount > 0,
               count: pendingBorrowCount,
@@ -149,34 +151,34 @@ export default function AppSidebar() {
           ],
         },
         {
-          name: "Scan Asset",
+          name: t("nav.scan_asset"),
           icon: <TaskIcon />,
           path: "/assets/scanner",
         },
         {
-          name: "Messages",
+          name: t("nav.messages"),
           icon: <ChatIcon />,
           path: "/chat",
         },
       ],
     },
     {
-      title: "Settings",
+      title: t("nav.settings"),
       items: [
         {
-          name: "User Profile",
+          name: t("nav.user_profile"),
           icon: <UserCircleIcon />,
           path: "/profile",
         },
         {
-          name: "Help & Support",
+          name: t("nav.help_support"),
           icon: <InfoIcon />,
           path: "/support",
         },
       ],
     },
     {
-      title: "Superadmin",
+      title: t("nav.superadmin"),
       roles: ["superadmin", "developer"],
       items: [
         {
@@ -184,62 +186,74 @@ export default function AppSidebar() {
           icon: <UserCircleIcon />,
           roles: ["superadmin"],
           subItems: [
-            { name: "List User", path: "/superadmin/users", roles: ["superadmin"] },
-            { name: "List Roles", path: "/superadmin/roles", roles: ["superadmin"] },
+            { name: t("nav.user_management"), path: "/superadmin/users", roles: ["superadmin"] },
+            { name: t("nav.role_management"), path: "/superadmin/roles", roles: ["superadmin"] },
           ],
         },
         {
-          name: "Assets",
+          name: t("nav.assets"),
           icon: <TableIcon />,
           roles: ["superadmin"],
           subItems: [
             {
-              name: "Asset Transactions",
+              name: t("nav.asset_transactions"),
               path: "/assets/transactions",
               roles: ["superadmin"],
             },
             {
-              name: "Asset Deleted",
+              name: t("nav.asset_deleted"),
               path: "/assets/deleted",
               roles: ["superadmin"],
             },
           ],
         },
         {
-          name: "Backup",
+          name: t("nav.database_backup"),
           icon: <DocsIcon />,
           roles: ["superadmin"],
           subItems: [
             {
-              name: "Manage Backups",
+              name: t("nav.database_backup"),
               path: "/backups",
               roles: ["superadmin"],
             },
           ],
         },
         {
-          name: "Activity Logs",
+          name: t("nav.activity_logs"),
           icon: <DocsIcon />,
           path: "/activity-logs",
           roles: ["superadmin"],
         },
         {
-          name: "Telegram Bot",
+          name: t("nav.telegram_bot"),
           icon: <PaperPlaneIcon />,
           path: "/superadmin/telegram",
           roles: ["developer", "superadmin"],
         },
         {
-          name: "API Tokens",
+          name: t("nav.api_tokens"),
           icon: <LockIcon />,
           path: "/superadmin/api-tokens",
           roles: ["developer", "superadmin"],
         },
         {
-          name: "Control Settings",
+          name: t("nav.control_settings"),
           icon: <PlugInIcon />,
           path: "/settings",
           roles: ["superadmin"],
+        },
+        {
+          name: t("nav.broadcast_notif"),
+          icon: <PaperPlaneIcon />,
+          path: "/broadcast-notification",
+          roles: ["superadmin", "developer"],
+        },
+        {
+          name: t("nav.notification_settings"),
+          icon: <PlugInIcon />,
+          path: "/notification-settings",
+          roles: ["superadmin", "developer"],
         },
       ],
     },
