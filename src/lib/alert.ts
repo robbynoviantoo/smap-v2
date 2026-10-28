@@ -1,117 +1,85 @@
 import Swal from "sweetalert2";
+import en from "@/locales/en.json";
+import id from "@/locales/id.json";
+
+// LanguageProvider keeps the document language in sync with the user's choice.
+// Resolve labels when opening the dialog so language changes apply immediately.
+function dialogLabels() {
+  return typeof document !== "undefined" && document.documentElement.lang === "en"
+    ? en.dialogs
+    : id.dialogs;
+}
+
+function dialogTheme(danger = false) {
+  const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+  return {
+    background: isDark ? "#111827" : "#ffffff",
+    color: isDark ? "#f3f4f6" : "#1f2937",
+    confirmButtonColor: danger ? "#ef4444" : "#2563eb",
+    cancelButtonColor: "#6b7280",
+    customClass: {
+      popup: "rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800",
+      confirmButton: "px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md cursor-pointer",
+      cancelButton: "px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer",
+    },
+  };
+}
 
 export const alert = {
-  /**
-   * Confirmation dialog for delete actions
-   */
-  async confirmDelete(
-    title: string = "Hapus Data?",
-    text: string = "Data yang dihapus akan dipindahkan ke riwayat arsip dan tidak dapat dibatalkan secara langsung."
-  ): Promise<boolean> {
-    const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-
+  async confirmDelete(title?: string, text?: string): Promise<boolean> {
+    const labels = dialogLabels();
     const result = await Swal.fire({
-      title,
-      text,
+      ...dialogTheme(true),
+      title: title ?? labels.delete_title,
+      text: text ?? labels.delete_description,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ef4444", // red-500
-      cancelButtonColor: "#6b7280", // gray-500
-      confirmButtonText: "Ya, Hapus!",
-      cancelButtonText: "Batal",
+      confirmButtonText: labels.confirm_delete,
+      cancelButtonText: labels.cancel,
       reverseButtons: true,
-      background: isDark ? "#111827" : "#ffffff",
-      color: isDark ? "#f3f4f6" : "#1f2937",
-      customClass: {
-        popup: "rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800",
-        confirmButton: "px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md cursor-pointer",
-        cancelButton: "px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer",
-      },
     });
-
     return result.isConfirmed;
   },
 
-  /**
-   * Confirmation dialog for general actions
-   */
-  async confirm(
-    title: string,
-    text: string,
-    confirmText: string = "Ya, Lanjutkan"
-  ): Promise<boolean> {
-    const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-
+  async confirm(title: string, text: string, confirmText?: string): Promise<boolean> {
+    const labels = dialogLabels();
     const result = await Swal.fire({
+      ...dialogTheme(),
       title,
       text,
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: "#2563eb", // brand-600
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: confirmText,
-      cancelButtonText: "Batal",
+      confirmButtonText: confirmText ?? labels.confirm_continue,
+      cancelButtonText: labels.cancel,
       reverseButtons: true,
-      background: isDark ? "#111827" : "#ffffff",
-      color: isDark ? "#f3f4f6" : "#1f2937",
-      customClass: {
-        popup: "rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800",
-        confirmButton: "px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md cursor-pointer",
-        cancelButton: "px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer",
-      },
     });
-
     return result.isConfirmed;
   },
 
-  /**
-   * Success notification
-   */
-  success(title: string = "Berhasil!", text?: string) {
-    const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-
+  success(title?: string, text?: string) {
+    const labels = dialogLabels();
     return Swal.fire({
-      title,
+      ...dialogTheme(),
+      title: title ?? labels.success,
       text,
       icon: "success",
-      confirmButtonColor: "#2563eb",
-      confirmButtonText: "OK",
-      background: isDark ? "#111827" : "#ffffff",
-      color: isDark ? "#f3f4f6" : "#1f2937",
-      customClass: {
-        popup: "rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800",
-        confirmButton: "px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md cursor-pointer",
-      },
+      confirmButtonText: labels.ok,
     });
   },
 
-  /**
-   * Error notification
-   */
-  error(title: string = "Terjadi Kesalahan!", text?: string) {
-    const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-
+  error(title?: string, text?: string) {
+    const labels = dialogLabels();
     return Swal.fire({
-      title,
+      ...dialogTheme(true),
+      title: title ?? labels.error,
       text,
       icon: "error",
-      confirmButtonColor: "#ef4444",
-      confirmButtonText: "Tutup",
-      background: isDark ? "#111827" : "#ffffff",
-      color: isDark ? "#f3f4f6" : "#1f2937",
-      customClass: {
-        popup: "rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800",
-        confirmButton: "px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md cursor-pointer",
-      },
+      confirmButtonText: labels.close,
     });
   },
 
-  /**
-   * Small Toast notification
-   */
   toast(title: string, icon: "success" | "error" | "warning" | "info" = "success") {
     const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
-
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
@@ -125,11 +93,7 @@ export const alert = {
         toast.onmouseleave = Swal.resumeTimer;
       },
     });
-
-    return Toast.fire({
-      icon,
-      title,
-    });
+    return Toast.fire({ icon, title });
   },
 };
 

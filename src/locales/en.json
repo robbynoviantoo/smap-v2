@@ -133,7 +133,9 @@
   "auth": {
     "failed": "These credentials do not match our records.",
     "password": "The provided password is incorrect.",
-    "throttle": "Too many login attempts. Please try again in :seconds seconds."
+    "throttle": "Too many login attempts. Please try again in :seconds seconds.",
+    "sign_out": "Sign out",
+    "signing_out": "Signing out..."
   },
   "roles": {
     "title": "Role Management",
@@ -237,8 +239,12 @@
     "error_revoke": "An error occurred while revoking the token"
   },
   "pagination": {
-    "previous": "&laquo; Previous",
-    "next": "Next &raquo;"
+    "previous": "Previous",
+    "next": "Next",
+    "summary": "Showing {from} to {to} of {total} results",
+    "rows": "Rows:",
+    "navigation": "Table pagination",
+    "page": "Page {page}"
   },
   "logs": {
     "title": "Activity Logs",
@@ -551,7 +557,8 @@
     "change_photo": "Change Photo",
     "save_changes": "Save All Changes",
     "cancel": "Cancel",
-    "crop_save": "Crop & Save"
+    "crop_save": "Crop & Save",
+    "desc": "Manage your personal information and account settings."
   },
   "validation": {
     "accepted": "The :attribute field must be accepted.",
@@ -979,7 +986,52 @@
     "deleted_assets_desc": "Archive of deleted assets. You can restore or permanently delete items.",
     "force_delete": "Permanently Delete",
     "transactions_title": "Asset Transactions History",
-    "transactions_desc": "Historical audit log of asset borrowings, returns, and status transfers."
+    "transactions_desc": "Historical audit log of asset borrowings, returns, and status transfers.",
+    "form": {
+      "edit_title": "Edit Asset",
+      "create_title": "Add New Asset",
+      "edit_description": "Editing asset: {name}",
+      "create_description": "Enter the complete asset specifications for the inventory",
+      "identity": "1. Asset Identity",
+      "classification": "2. Category & Location",
+      "condition_photo": "3. Condition & Photo",
+      "number": "Asset Number (Preview)",
+      "regenerate": "Generate Again",
+      "generating": "Generating unique code...",
+      "name": "Asset Name",
+      "name_placeholder": "Select or enter an asset name...",
+      "model": "Asset Model / Type",
+      "model_placeholder": "Example: Dell XPS 15 / EB-X400...",
+      "brand": "Brand",
+      "brand_placeholder": "Select a brand...",
+      "unit": "Unit of Measure",
+      "unit_placeholder": "Unit...",
+      "category": "Category",
+      "category_placeholder": "Select or enter a category...",
+      "subcategory": "Subcategory",
+      "subcategory_placeholder": "Select or enter a subcategory...",
+      "location": "Room Location",
+      "location_placeholder": "Select or enter a room...",
+      "building": "Building / Floor",
+      "building_placeholder": "Select or enter a building...",
+      "condition": "Asset Condition",
+      "good": "Good",
+      "maintenance": "Maintenance",
+      "broken": "Broken",
+      "last_maintenance": "Last Maintenance",
+      "next_maintenance": "Next Maintenance",
+      "photo": "Asset Photo",
+      "preview": "Asset photo preview",
+      "remarks": "Notes / Remarks",
+      "remarks_placeholder": "Additional specification notes...",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save Changes",
+      "add": "Add Asset",
+      "name_required": "Asset name is required.",
+      "save_failed": "Failed to save the asset.",
+      "close": "Close asset form"
+    }
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -1069,7 +1121,16 @@
     "created_at": "Created At",
     "updated_at": "Updated At",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "combobox": {
+      "placeholder": "Select or enter a new value...",
+      "clear": "Clear text",
+      "toggle": "Toggle options",
+      "create": "Use new value: \"{value}\"",
+      "empty": "No saved options yet",
+      "match": "Matching option",
+      "selected": "Selected"
+    }
   },
   "souvenirs": {
     "page_title": "Souvenir & Merchandise Stock",
@@ -1124,5 +1185,16 @@
     "btn_verify": "Verify Asset",
     "asset_found": "Asset Successfully Identified",
     "asset_not_found": "No asset found matching this code."
+  },
+  "dialogs": {
+    "delete_title": "Delete data?",
+    "delete_description": "Deleted data will be moved to the archive and cannot be restored directly.",
+    "confirm_delete": "Yes, delete!",
+    "cancel": "Cancel",
+    "confirm_continue": "Yes, continue",
+    "success": "Success!",
+    "error": "Something went wrong!",
+    "close": "Close",
+    "ok": "OK"
   }
 }

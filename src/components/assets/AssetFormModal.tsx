@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import AssetFormSection from "./AssetFormSection";
 import Button from "@/components/ui/button/Button";
 import CreatableCombobox from "@/components/form/CreatableCombobox";
-import apiClient from "@/lib/api-client";
-import { Asset, ApiResponse } from "@/types/api";
+import { assetService } from "@/services/assetService";
+import { useTranslation } from "@/context/LanguageContext";
+import { isAxiosError } from "axios";
+import { Asset } from "@/types/api";
 import { Package, X, Lock, RefreshCw, ImageIcon } from "lucide-react";
 
 interface AssetFormModalProps {
@@ -34,6 +37,7 @@ export default function AssetFormModal({
   subCategories = [],
   existingNames = [],
 }: AssetFormModalProps) {
+  const { t } = useTranslation();
   const [noAsset, setNoAsset] = useState("");
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [name, setName] = useState("");
@@ -57,9 +61,9 @@ export default function AssetFormModal({
   const fetchNextNoAsset = async () => {
     setIsGeneratingCode(true);
     try {
-      const res = await apiClient.get<ApiResponse<{ no_asset: string }>>("/assets/generate-no-asset");
-      if (res.data?.data?.no_asset) {
-        setNoAsset(res.data.data.no_asset);
+      const res = await assetService.generateAssetNumber();
+      if (res.data?.no_asset) {
+        setNoAsset(res.data.no_asset);
       }
     } catch {
       const fallback = "AST-" + Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -80,7 +84,7 @@ export default function AssetFormModal({
       setLocation(initialData.location || "");
       setBuilding(initialData.building || "");
       setUnit(initialData.unit || "Unit");
-      setStatus((initialData.status as any) || "good");
+      setStatus(initialData.status === "maintenance" || initialData.status === "broken" ? initialData.status : "good");
       setLastMaintenance(initialData.last_maintenance || "");
       setNextMaintenance(initialData.next_maintenance || "");
       setRemarks(initialData.remarks || "");
@@ -108,6 +112,12 @@ export default function AssetFormModal({
     setErrorMsg(null);
   }, [initialData, isOpen]);
 
+  useEffect(() => {
+    return () => {
+      if (imagePreview?.startsWith("blob:")) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
+
   if (!isOpen) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,7 +133,7 @@ export default function AssetFormModal({
     setErrorMsg(null);
 
     if (!name.trim()) {
-      setErrorMsg("Nama aset wajib diisi.");
+      setErrorMsg(t("assets.form.name_required"));
       return;
     }
 
@@ -147,8 +157,8 @@ export default function AssetFormModal({
         imageFile || undefined
       );
       onClose();
-    } catch (err: any) {
-      setErrorMsg(err?.response?.data?.message || "Gagal menyimpan data aset.");
+    } catch (err: unknown) {
+      setErrorMsg((isAxiosError<{ message?: string }>(err) && err.response?.data?.message) || t("assets.form.save_failed"));
     }
   };
 
@@ -167,16 +177,17 @@ export default function AssetFormModal({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-tight">
-                {initialData ? "Edit Data Aset" : "Tambah Aset Baru"}
+                {initialData ? t("assets.form.edit_title") : t("assets.form.create_title")}
               </h3>
               <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                {initialData ? `Mengubah data unit: ${initialData.name}` : "Input spesifikasi unit aset secara lengkap ke dalam inventaris"}
+                {initialData ? t("assets.form.edit_description", { name: initialData.name }) : t("assets.form.create_description")}
               </p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
+            aria-label={t("assets.form.close")}
             className="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -193,16 +204,13 @@ export default function AssetFormModal({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
             {/* Column 1: Identitas Aset */}
-            <div className="space-y-3.5 bg-gray-50/60 dark:bg-gray-800/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
-              <h4 className="font-bold text-xs text-brand-600 dark:text-brand-400 uppercase tracking-wider">
-                1. Identitas Aset
-              </h4>
+            <AssetFormSection title={t("assets.form.identity")}>
 
               {/* Nomor Asset Preview */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm">
-                    No. Aset (Preview)
+                    {t("assets.form.number")}
                   </label>
                   {!initialData && (
                     <button
@@ -212,7 +220,7 @@ export default function AssetFormModal({
                       className="inline-flex items-center gap-1 text-xs text-brand-600 dark:text-brand-400 hover:underline cursor-pointer font-medium"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingCode ? "animate-spin" : ""}`} />
-                      <span>Acak Baru</span>
+                      <span>{t("assets.form.regenerate")}</span>
                     </button>
                   )}
                 </div>
@@ -221,7 +229,7 @@ export default function AssetFormModal({
                     type="text"
                     readOnly
                     value={noAsset}
-                    placeholder="Membuat kode unik..."
+                    placeholder={t("assets.form.generating")}
                     className="h-11 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 px-4 pr-10 font-mono text-sm font-bold text-brand-600 dark:text-brand-400 cursor-not-allowed select-all focus:outline-hidden"
                   />
                   <Lock className="w-4 h-4 text-gray-400 absolute right-3.5 top-3.5" />
@@ -231,13 +239,13 @@ export default function AssetFormModal({
               {/* Nama Aset */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Nama Aset <span className="text-red-500">*</span>
+                  {t("assets.form.name")} <span className="text-red-500">*</span>
                 </label>
                 <CreatableCombobox
                   options={existingNames}
                   value={name}
                   onChange={setName}
-                  placeholder="Pilih atau ketik nama aset..."
+                  placeholder={t("assets.form.name_placeholder")}
                   disabled={isLoading}
                   required
                 />
@@ -246,13 +254,13 @@ export default function AssetFormModal({
               {/* Model / Tipe Aset */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Model / Tipe Aset
+                  {t("assets.form.model")}
                 </label>
                 <CreatableCombobox
                   options={existingNames}
                   value={assetModel}
                   onChange={setAssetModel}
-                  placeholder="Contoh: Dell XPS 15 / EB-X400..."
+                  placeholder={t("assets.form.model_placeholder")}
                   disabled={isLoading}
                 />
               </div>
@@ -261,47 +269,44 @@ export default function AssetFormModal({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                    Merk / Brand
+                    {t("assets.form.brand")}
                   </label>
                   <CreatableCombobox
                     options={merks}
                     value={merk}
                     onChange={setMerk}
-                    placeholder="Pilih merk..."
+                    placeholder={t("assets.form.brand_placeholder")}
                     disabled={isLoading}
                   />
                 </div>
                 <div>
                   <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                    Satuan Unit
+                    {t("assets.form.unit")}
                   </label>
                   <CreatableCombobox
                     options={unitOptions}
                     value={unit}
                     onChange={setUnit}
-                    placeholder="Unit..."
+                    placeholder={t("assets.form.unit_placeholder")}
                     disabled={isLoading}
                   />
                 </div>
               </div>
-            </div>
+            </AssetFormSection>
 
             {/* Column 2: Klasifikasi & Lokasi */}
-            <div className="space-y-3.5 bg-gray-50/60 dark:bg-gray-800/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
-              <h4 className="font-bold text-xs text-brand-600 dark:text-brand-400 uppercase tracking-wider">
-                2. Kategori & Lokasi
-              </h4>
+            <AssetFormSection title={t("assets.form.classification")}>
 
               {/* Kategori */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Kategori
+                  {t("assets.form.category")}
                 </label>
                 <CreatableCombobox
                   options={categories}
                   value={category}
                   onChange={setCategory}
-                  placeholder="Pilih atau ketik kategori..."
+                  placeholder={t("assets.form.category_placeholder")}
                   disabled={isLoading}
                 />
               </div>
@@ -309,13 +314,13 @@ export default function AssetFormModal({
               {/* Sub Kategori */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Sub Kategori
+                  {t("assets.form.subcategory")}
                 </label>
                 <CreatableCombobox
                   options={subCategories}
                   value={subCategory}
                   onChange={setSubCategory}
-                  placeholder="Pilih atau ketik sub kategori..."
+                  placeholder={t("assets.form.subcategory_placeholder")}
                   disabled={isLoading}
                 />
               </div>
@@ -323,13 +328,13 @@ export default function AssetFormModal({
               {/* Lokasi / Ruangan */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Lokasi Ruangan
+                  {t("assets.form.location")}
                 </label>
                 <CreatableCombobox
                   options={locations}
                   value={location}
                   onChange={setLocation}
-                  placeholder="Pilih atau ketik ruangan..."
+                  placeholder={t("assets.form.location_placeholder")}
                   disabled={isLoading}
                 />
               </div>
@@ -337,39 +342,36 @@ export default function AssetFormModal({
               {/* Gedung / Lantai */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Gedung / Lantai
+                  {t("assets.form.building")}
                 </label>
                 <CreatableCombobox
                   options={buildings}
                   value={building}
                   onChange={setBuilding}
-                  placeholder="Pilih atau ketik gedung..."
+                  placeholder={t("assets.form.building_placeholder")}
                   disabled={isLoading}
                 />
               </div>
-            </div>
+            </AssetFormSection>
 
             {/* Column 3: Kondisi, Maintenance & Foto */}
-            <div className="space-y-3.5 bg-gray-50/60 dark:bg-gray-800/40 p-4 rounded-2xl border border-gray-100 dark:border-gray-800">
-              <h4 className="font-bold text-xs text-brand-600 dark:text-brand-400 uppercase tracking-wider">
-                3. Kondisi & Foto
-              </h4>
+            <AssetFormSection title={t("assets.form.condition_photo")}>
 
               {/* Kondisi Status */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Kondisi Unit
+                  {t("assets.form.condition")}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { val: "good", label: "Baik", color: "border-green-500 text-green-700 bg-green-50 dark:bg-green-950/40 dark:text-green-300" },
-                    { val: "maintenance", label: "Maint", color: "border-yellow-500 text-yellow-700 bg-yellow-50 dark:bg-yellow-950/40 dark:text-yellow-300" },
-                    { val: "broken", label: "Rusak", color: "border-red-500 text-red-700 bg-red-50 dark:bg-red-950/40 dark:text-red-300" },
-                  ].map((s) => (
+                  {([
+                    { val: "good", label: t("assets.form.good"), color: "border-green-500 text-green-700 bg-green-50 dark:bg-green-950/40 dark:text-green-300" },
+                    { val: "maintenance", label: t("assets.form.maintenance"), color: "border-yellow-500 text-yellow-700 bg-yellow-50 dark:bg-yellow-950/40 dark:text-yellow-300" },
+                    { val: "broken", label: t("assets.form.broken"), color: "border-red-500 text-red-700 bg-red-50 dark:bg-red-950/40 dark:text-red-300" },
+                  ] as const).map((s) => (
                     <button
                       type="button"
                       key={s.val}
-                      onClick={() => setStatus(s.val as any)}
+                      onClick={() => setStatus(s.val)}
                       className={`h-11 px-2 text-sm font-semibold rounded-xl border transition-all cursor-pointer text-center ${
                         status === s.val
                           ? `${s.color} ring-2 ring-brand-500/20 font-bold shadow-xs`
@@ -386,7 +388,7 @@ export default function AssetFormModal({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-gray-700 dark:text-gray-200 text-xs block mb-1.5 truncate">
-                    Maint. Terakhir
+                    {t("assets.form.last_maintenance")}
                   </label>
                   <input
                     type="date"
@@ -398,7 +400,7 @@ export default function AssetFormModal({
                 </div>
                 <div>
                   <label className="font-semibold text-gray-700 dark:text-gray-200 text-xs block mb-1.5 truncate">
-                    Berikutnya
+                    {t("assets.form.next_maintenance")}
                   </label>
                   <input
                     type="date"
@@ -413,12 +415,12 @@ export default function AssetFormModal({
               {/* Foto Upload */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Foto Unit
+                  {t("assets.form.photo")}
                 </label>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800 flex items-center justify-center shrink-0">
                     {imagePreview ? (
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                      <img src={imagePreview} alt={t("assets.form.preview")} className="w-full h-full object-cover" />
                     ) : (
                       <ImageIcon className="w-5 h-5 text-gray-300 dark:text-gray-600" />
                     )}
@@ -435,18 +437,18 @@ export default function AssetFormModal({
               {/* Catatan Remarks */}
               <div>
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
-                  Catatan / Keterangan
+                  {t("assets.form.remarks")}
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Catatan spesifikasi tambahan..."
+                  placeholder={t("assets.form.remarks_placeholder")}
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                   disabled={isLoading}
                   className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-3 text-sm dark:text-white focus:outline-hidden focus:ring-2 focus:ring-brand-500/20"
                 />
               </div>
-            </div>
+            </AssetFormSection>
           </div>
 
           {/* Footer Buttons */}
@@ -456,10 +458,10 @@ export default function AssetFormModal({
               onClick={onClose}
               className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 rounded-xl transition cursor-pointer"
             >
-              Batal
+              {t("assets.form.cancel")}
             </button>
             <Button size="md" disabled={isLoading}>
-              {isLoading ? "Menyimpan..." : initialData ? "Simpan Perubahan" : "Tambah Aset"}
+              {isLoading ? t("assets.form.saving") : initialData ? t("assets.form.save") : t("assets.form.add")}
             </Button>
           </div>
         </form>

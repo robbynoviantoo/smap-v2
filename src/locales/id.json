@@ -535,7 +535,8 @@
     "change_photo": "Ubah Foto",
     "save_changes": "Simpan Perubahan",
     "cancel": "Batal",
-    "crop_save": "Potong & Simpan"
+    "crop_save": "Potong & Simpan",
+    "desc": "Kelola informasi pribadi dan pengaturan akun Anda."
   },
   "chat": {
     "title": "Chat",
@@ -802,7 +803,52 @@
     "deleted_assets_desc": "Arsip aset yang dihapus sementara. Anda dapat memulihkan atau menghapusnya secara permanen.",
     "force_delete": "Hapus Permanen",
     "transactions_title": "Riwayat Transaksi Aset",
-    "transactions_desc": "Catatan log audit peminjaman, pengembalian, dan mutasi aset."
+    "transactions_desc": "Catatan log audit peminjaman, pengembalian, dan mutasi aset.",
+    "form": {
+      "edit_title": "Edit Data Aset",
+      "create_title": "Tambah Aset Baru",
+      "edit_description": "Mengubah data unit: {name}",
+      "create_description": "Input spesifikasi unit aset secara lengkap ke dalam inventaris",
+      "identity": "1. Identitas Aset",
+      "classification": "2. Kategori & Lokasi",
+      "condition_photo": "3. Kondisi & Foto",
+      "number": "No. Aset (Preview)",
+      "regenerate": "Acak Baru",
+      "generating": "Membuat kode unik...",
+      "name": "Nama Aset",
+      "name_placeholder": "Pilih atau ketik nama aset...",
+      "model": "Model / Tipe Aset",
+      "model_placeholder": "Contoh: Dell XPS 15 / EB-X400...",
+      "brand": "Merk / Brand",
+      "brand_placeholder": "Pilih merk...",
+      "unit": "Satuan Unit",
+      "unit_placeholder": "Unit...",
+      "category": "Kategori",
+      "category_placeholder": "Pilih atau ketik kategori...",
+      "subcategory": "Sub Kategori",
+      "subcategory_placeholder": "Pilih atau ketik sub kategori...",
+      "location": "Lokasi Ruangan",
+      "location_placeholder": "Pilih atau ketik ruangan...",
+      "building": "Gedung / Lantai",
+      "building_placeholder": "Pilih atau ketik gedung...",
+      "condition": "Kondisi Unit",
+      "good": "Baik",
+      "maintenance": "Perawatan",
+      "broken": "Rusak",
+      "last_maintenance": "Perawatan Terakhir",
+      "next_maintenance": "Berikutnya",
+      "photo": "Foto Unit",
+      "preview": "Pratinjau foto aset",
+      "remarks": "Catatan / Keterangan",
+      "remarks_placeholder": "Catatan spesifikasi tambahan...",
+      "cancel": "Batal",
+      "saving": "Menyimpan...",
+      "save": "Simpan Perubahan",
+      "add": "Tambah Aset",
+      "name_required": "Nama aset wajib diisi.",
+      "save_failed": "Gagal menyimpan data aset.",
+      "close": "Tutup form aset"
+    }
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -892,7 +938,16 @@
     "created_at": "Dibuat Pada",
     "updated_at": "Diperbarui Pada",
     "active": "Aktif",
-    "inactive": "Nonaktif"
+    "inactive": "Nonaktif",
+    "combobox": {
+      "placeholder": "Pilih atau ketik baru...",
+      "clear": "Hapus teks",
+      "toggle": "Tampilkan pilihan",
+      "create": "Gunakan baru: \"{value}\"",
+      "empty": "Belum ada pilihan data tersimpan",
+      "match": "Pilihan sesuai",
+      "selected": "Terpilih"
+    }
   },
   "souvenirs": {
     "page_title": "Stok Souvenir & Merchandise",
@@ -947,5 +1002,28 @@
     "btn_verify": "Verifikasi Aset",
     "asset_found": "Aset Berhasil Teridentifikasi",
     "asset_not_found": "Aset tidak ditemukan dengan kode tersebut."
+  },
+  "auth": {
+    "sign_out": "Keluar",
+    "signing_out": "Sedang keluar..."
+  },
+  "pagination": {
+    "previous": "Sebelumnya",
+    "next": "Selanjutnya",
+    "summary": "Menampilkan {from} hingga {to} dari {total} data",
+    "rows": "Baris:",
+    "navigation": "Navigasi halaman tabel",
+    "page": "Halaman {page}"
+  },
+  "dialogs": {
+    "delete_title": "Hapus Data?",
+    "delete_description": "Data yang dihapus akan dipindahkan ke riwayat arsip dan tidak dapat dibatalkan secara langsung.",
+    "confirm_delete": "Ya, Hapus!",
+    "cancel": "Batal",
+    "confirm_continue": "Ya, Lanjutkan",
+    "success": "Berhasil!",
+    "error": "Terjadi Kesalahan!",
+    "close": "Tutup",
+    "ok": "OK"
   }
 }

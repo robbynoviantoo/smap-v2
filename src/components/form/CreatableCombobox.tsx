@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 import { ChevronDown, X, Plus } from "lucide-react";
 
 interface CreatableComboboxProps {
@@ -17,11 +18,12 @@ export default function CreatableCombobox({
   options = [],
   value,
   onChange,
-  placeholder = "Pilih atau ketik baru...",
+  placeholder,
   disabled = false,
   required = false,
   className = "",
 }: CreatableComboboxProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState(value || "");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,7 +86,7 @@ export default function CreatableCombobox({
           value={query}
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t("common.combobox.placeholder")}
           disabled={disabled}
           required={required}
           className={`h-11 w-full rounded-xl border bg-white dark:bg-gray-900 px-4 pr-14 text-sm text-gray-900 dark:text-white transition-all focus:outline-hidden focus:ring-2 focus:ring-brand-500/20 ${
@@ -101,7 +103,7 @@ export default function CreatableCombobox({
               type="button"
               onClick={handleClear}
               className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition cursor-pointer"
-              title="Hapus teks"
+              title={t("common.combobox.clear")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -109,6 +111,8 @@ export default function CreatableCombobox({
 
           <button
             type="button"
+            aria-label={t("common.combobox.toggle")}
+            aria-expanded={isOpen}
             tabIndex={-1}
             disabled={disabled}
             onClick={() => {
@@ -137,17 +141,17 @@ export default function CreatableCombobox({
                 className="w-full px-4 py-2.5 rounded-lg flex items-center gap-2 text-left text-brand-600 dark:text-brand-400 bg-brand-50/80 hover:bg-brand-100 dark:bg-brand-950/40 dark:hover:bg-brand-900/60 font-semibold transition cursor-pointer text-sm"
               >
                 <Plus className="w-4 h-4 shrink-0" />
-                <span className="truncate">Gunakan baru: &quot;{query.trim()}&quot;</span>
+                <span className="truncate">{t("common.combobox.create", { value: query.trim() })}</span>
               </button>
             )}
 
             {filteredOptions.length === 0 && !query.trim() ? (
               <div className="py-3.5 px-4 text-center text-gray-400 text-sm">
-                Belum ada pilihan data tersimpan
+                {t("common.combobox.empty")}
               </div>
             ) : filteredOptions.length === 0 && isExactMatch ? (
               <div className="py-3 px-4 text-gray-500 text-sm">
-                Pilihan sesuai
+                {t("common.combobox.match")}
               </div>
             ) : (
               filteredOptions.map((opt) => {
@@ -167,7 +171,7 @@ export default function CreatableCombobox({
                     <span className="truncate">{opt}</span>
                     {isSelected && (
                       <span className="text-xs text-brand-600 dark:text-brand-400 font-semibold">
-                        Terpilih
+                        {t("common.combobox.selected")}
                       </span>
                     )}
                   </button>

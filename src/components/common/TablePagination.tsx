@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useId } from "react";
 import { useTranslation } from "@/context/LanguageContext";
 
 interface TablePaginationProps {
@@ -27,6 +27,8 @@ export default function TablePagination({
   isLoading = false,
 }: TablePaginationProps) {
   const { t, locale } = useTranslation();
+  const selectId = useId();
+  const formatNumber = (value: number) => value.toLocaleString(locale === "en" ? "en-US" : "id-ID");
   if (total === 0) return null;
 
   // Generate page numbers with ellipses
@@ -67,22 +69,20 @@ export default function TablePagination({
       {/* Left: Info Text & Per Page Selector */}
       <div className="flex flex-wrap items-center gap-3 text-gray-500 dark:text-gray-400">
         <span>
-          {locale === 'en' ? 'Showing ' : 'Menampilkan '}
-          <strong className="font-semibold text-gray-800 dark:text-gray-200">{from ?? ((currentPage - 1) * perPage + 1)}</strong>
-          {locale === 'en' ? ' to ' : ' hingga '}
-          <strong className="font-semibold text-gray-800 dark:text-gray-200">{to ?? Math.min(currentPage * perPage, total)}</strong>
-          {locale === 'en' ? ' of ' : ' dari '}
-          <strong className="font-semibold text-gray-800 dark:text-gray-200">{total}</strong>
-          {locale === 'en' ? ' results' : ' data'}
+          {t("pagination.summary", {
+            from: formatNumber(from ?? ((currentPage - 1) * perPage + 1)),
+            to: formatNumber(to ?? Math.min(currentPage * perPage, total)),
+            total: formatNumber(total),
+          })}
         </span>
 
         {onPerPageChange && (
           <div className="flex items-center gap-1.5 ml-2">
-            <label htmlFor="per-page-select" className="text-gray-400">
-              {locale === 'en' ? 'Rows:' : 'Baris:'}
+            <label htmlFor={selectId} className="text-gray-400">
+              {t("pagination.rows")}
             </label>
             <select
-              id="per-page-select"
+              id={selectId}
               value={perPage}
               onChange={(e) => onPerPageChange(Number(e.target.value))}
               disabled={isLoading}
@@ -99,7 +99,7 @@ export default function TablePagination({
       </div>
 
       {/* Right: Page Buttons */}
-      <div className="flex items-center gap-1">
+      <nav aria-label={t("pagination.navigation")} className="flex items-center gap-1">
         {/* Previous Button */}
         <button
           type="button"
@@ -107,7 +107,7 @@ export default function TablePagination({
           disabled={currentPage <= 1 || isLoading}
           className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition cursor-pointer"
         >
-          &larr; Prev
+          &larr; {t("pagination.previous")}
         </button>
 
         {/* Number Buttons */}
@@ -128,6 +128,8 @@ export default function TablePagination({
               <button
                 type="button"
                 key={pageNum}
+                aria-label={t("pagination.page", { page: pageNum })}
+                aria-current={isActive ? "page" : undefined}
                 onClick={() => onPageChange(pageNum)}
                 disabled={isLoading}
                 className={`min-w-[32px] h-8 px-2 flex items-center justify-center rounded-lg font-semibold transition cursor-pointer ${
@@ -154,9 +156,9 @@ export default function TablePagination({
           disabled={currentPage >= lastPage || isLoading}
           className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition cursor-pointer"
         >
-          Next &rarr;
+          {t("pagination.next")} &rarr;
         </button>
-      </div>
+      </nav>
     </div>
   );
 }

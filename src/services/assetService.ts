@@ -17,6 +17,11 @@ export interface AssetFilterParams {
 }
 
 export const assetService = {
+  async generateAssetNumber() {
+    const res = await apiClient.get<ApiResponse<{ no_asset: string }>>('/assets/generate-no-asset');
+    return res.data;
+  },
+
   async getAssets(params?: AssetFilterParams) {
     const res = await apiClient.get<ApiResponse<Asset[]>>('/assets', { params });
     return res.data;
