@@ -4,9 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/api/useAuth';
 import { useTranslation } from '@/context/LanguageContext';
-import { getPushClient, pushConfigured, registerPushWorker, syncPushToken } from '@/services/pushService';
+import { getPushClient, pushConfigured, pushConfigurationError, registerPushWorker, syncPushToken, wasPushEnabled, rememberPushEnabled, forgetPushEnabled } from '@/services/pushService';
 
-type Status = 'checking' | 'available' | 'unsupported' | 'unconfigured' | 'denied' | 'enabling' | 'enabled' | 'error';
+type Status = 'checking' | 'available' | 'unsupported' | 'unconfigured' | 'misconfigured' | 'denied' | 'enabling' | 'enabled' | 'error';
 
 export default function PushNotifications() {
   const { user } = useAuth();
@@ -26,18 +26,22 @@ export default function PushNotifications() {
         return;
       }
       if (!pushConfigured) {
-        if (active) setStatus('unconfigured');
+        if (active) setStatus(pushConfigurationError === 'invalid-vapid' ? 'misconfigured' : 'unconfigured');
         return;
       }
       if (Notification.permission !== 'granted') {
+        forgetPushEnabled();
         if (active) setStatus(Notification.permission === 'denied' ? 'denied' : 'available');
         return;
       }
+      if (wasPushEnabled(user.id) && active) setStatus('enabled');
       if (syncing || !active) return;
       syncing = true;
       try {
-        if (active) setStatus('enabling');
-        if (await syncPushToken(() => active)) setStatus('enabled');
+        if (await syncPushToken(() => active)) {
+          rememberPushEnabled(user.id);
+          setStatus('enabled');
+        }
         if (!active || unsubscribe) return;
         const { sdk, messaging } = await getPushClient();
         if (!active) return;

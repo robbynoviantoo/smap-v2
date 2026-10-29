@@ -5,6 +5,7 @@ import { useTranslation } from "@/context/LanguageContext";
 import { ChevronDown, X, Plus } from "lucide-react";
 
 interface CreatableComboboxProps {
+  id?: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
@@ -15,6 +16,7 @@ interface CreatableComboboxProps {
 }
 
 export default function CreatableCombobox({
+  id,
   options = [],
   value,
   onChange,
@@ -74,6 +76,7 @@ export default function CreatableCombobox({
       {/* Input container */}
       <div className="relative flex items-center">
         <input
+          id={id}
           ref={inputRef}
           type="text"
           value={query}

@@ -14,7 +14,7 @@ export function useSouvenirNames(params?: BaseFilterParams) {
   const createMutation = useMutation({
     mutationFn: souvenirService.createName,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'names'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
@@ -22,14 +22,14 @@ export function useSouvenirNames(params?: BaseFilterParams) {
     mutationFn: ({ id, data }: { id: number | string; data: { name: string; description?: string } }) =>
       souvenirService.updateName(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'names'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number | string) => souvenirService.deleteName(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'names'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
@@ -55,16 +55,16 @@ export function useSouvenirs(params?: BaseFilterParams) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: FormData | Record<string, any>) => souvenirService.createSouvenir(data),
+    mutationFn: (data: FormData | Record<string, unknown>) => souvenirService.createSouvenir(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'stocks'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number | string) => souvenirService.deleteSouvenir(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'stocks'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
@@ -72,8 +72,7 @@ export function useSouvenirs(params?: BaseFilterParams) {
     mutationFn: (data: { souvenir_id: number; qty: number; date: string; notes?: string }) =>
       souvenirService.addStock(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'stocks'] });
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'additions'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
@@ -103,34 +102,30 @@ export function useSouvenirTransactions(
   const createMutation = useMutation({
     mutationFn: souvenirService.createTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'stocks'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
   const finishMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number | string; data: any }) =>
+    mutationFn: ({ id, data }: { id: number | string; data: Parameters<typeof souvenirService.finishTransaction>[1] }) =>
       souvenirService.finishTransaction(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'stocks'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
   const recallMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number | string; data?: any }) =>
+    mutationFn: ({ id, data }: { id: number | string; data: { qty_recall: number; recall_notes?: string } }) =>
       souvenirService.recallTransaction(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'stocks'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number | string) => souvenirService.deleteTransaction(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['souvenirs', 'stocks'] });
+      void queryClient.invalidateQueries({ queryKey: ['souvenirs'] });
     },
   });
 

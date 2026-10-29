@@ -13,6 +13,7 @@ export interface Souvenir {
   id: number;
   souvenir_name_id: number;
   qty: number;
+  is_low_stock?: boolean;
   initial_qty: number;
   description?: string;
   image?: string;

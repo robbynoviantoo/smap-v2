@@ -8,21 +8,13 @@ import TablePagination from '@/components/common/TablePagination';
 import { TableSkeleton } from '@/components/common/Skeleton';
 import { SouvenirName } from '@/types/souvenir';
 import alert from '@/lib/alert';
-import Link from 'next/link';
-import { 
-  Gift, 
-  Plus, 
-  Search, 
-  Edit3, 
-  Trash2, 
-  Layers, 
-  X, 
-  Loader2, 
-  RefreshCw 
-} from 'lucide-react';
+import { isAxiosError } from 'axios';
+import { useSouvenirAccess } from '@/hooks/useSouvenirAccess';
+import { Gift, Plus, Search, Edit3, Trash2, X, Loader2, RefreshCw } from 'lucide-react';
 
 export default function SouvenirNamesPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
+  const { canManage, canDelete } = useSouvenirAccess();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,7 +56,7 @@ export default function SouvenirNamesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nameInput.trim()) {
-      alert.error('Nama souvenir wajib diisi!');
+      alert.error(t('souvenirUi.nameRequired'));
       return;
     }
 
@@ -72,14 +64,14 @@ export default function SouvenirNamesPage() {
       setIsSubmitting(true);
       if (editingItem) {
         await updateName({ id: editingItem.id, data: { name: nameInput, description: descInput } });
-        alert.success('Nama souvenir berhasil diperbarui!');
+        alert.success(t('souvenirUi.nameUpdated'));
       } else {
         await createName({ name: nameInput, description: descInput });
-        alert.success('Nama souvenir baru berhasil ditambahkan!');
+        alert.success(t('souvenirUi.nameCreated'));
       }
       setIsModalOpen(false);
-    } catch (err: any) {
-      alert.error(err.response?.data?.message || 'Gagal menyimpan nama souvenir.');
+    } catch (err: unknown) {
+      alert.error((isAxiosError(err) ? err.response?.data?.message : undefined) || t('souvenirUi.nameSaveFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -87,16 +79,16 @@ export default function SouvenirNamesPage() {
 
   const handleDelete = async (item: SouvenirName) => {
     const confirmed = await alert.confirm(
-      'Hapus Master Nama Souvenir?',
-      `Nama "${item.name}" akan dihapus permanen.`
+      t('souvenirUi.nameDeleteTitle'),
+      t('souvenirUi.nameDeleteBody', { name: item.name })
     );
     if (!confirmed) return;
 
     try {
       await deleteName(item.id);
-      alert.success('Nama souvenir berhasil dihapus.');
-    } catch (err: any) {
-      alert.error(err.response?.data?.message || 'Gagal menghapus nama souvenir.');
+      alert.success(t('souvenirUi.nameDeleted'));
+    } catch (err: unknown) {
+      alert.error((isAxiosError(err) ? err.response?.data?.message : undefined) || t('souvenirUi.nameDeleteFailed'));
     }
   };
 
@@ -105,8 +97,8 @@ export default function SouvenirNamesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {t('souvenirs.master_names_title')}
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+            {t('souvenirWorkspace.types')}
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {t('souvenirs.master_names_desc')}
@@ -114,19 +106,13 @@ export default function SouvenirNamesPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <Link
-            href="/souvenirs"
-            className="px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 shadow-sm"
-          >
-            {t('souvenirs.page_title')}
-          </Link>
-          <button
+          {canManage && <button
             onClick={handleOpenCreate}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition-all"
+            className="inline-flex min-h-11 items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition-all"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>{t('souvenirs.add_master_name')}</span>
-          </button>
+          </button>}
         </div>
       </div>
 
@@ -141,7 +127,7 @@ export default function SouvenirNamesPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            placeholder="Cari nama souvenir..."
+            placeholder={t('souvenirUi.searchStock')}
             className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
@@ -149,8 +135,8 @@ export default function SouvenirNamesPage() {
         <button
           onClick={() => refetch()}
           disabled={isFetching}
-          className="p-2 text-gray-500 hover:text-gray-700 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
-          title="Refresh"
+          className="min-h-11 min-w-11 p-2 text-gray-500 hover:text-gray-700 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
+          title={t('souvenirUi.refresh')}
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin' : ''}`} />
         </button>
@@ -161,19 +147,19 @@ export default function SouvenirNamesPage() {
         <TableSkeleton rows={6} />
       ) : items.length === 0 ? (
         <div className="py-12 bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl text-center">
-          <p className="text-xs text-gray-400">Belum ada master nama souvenir yang tersimpan.</p>
+          <p className="text-xs text-gray-400">{t('souvenirUi.emptyTypes')}</p>
         </div>
       ) : (
         <div className="w-full overflow-hidden bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="min-w-[640px] w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wider">
-                  <th className="py-3.5 pl-5 pr-3">Nama Souvenir</th>
-                  <th className="py-3.5 px-3">Deskripsi</th>
-                  <th className="py-3.5 px-3">Jumlah Stok Terdata</th>
-                  <th className="py-3.5 px-3">Tanggal Dibuat</th>
-                  <th className="py-3.5 pl-3 pr-5 text-right">Aksi</th>
+                  <th className="py-3.5 pl-5 pr-3">{t('souvenirUi.name')}</th>
+                  <th className="py-3.5 px-3">{t('souvenirUi.description')}</th>
+                  <th className="py-3.5 px-3">{t('souvenirUi.stockRecords')}</th>
+                  <th className="py-3.5 px-3">{t('souvenirUi.createdAt')}</th>
+                  <th className="py-3.5 pl-3 pr-5 text-right">{t('souvenirUi.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -181,7 +167,7 @@ export default function SouvenirNamesPage() {
                   <tr key={item.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/20 transition-colors">
                     <td className="py-4 pl-5 pr-3 font-semibold text-gray-900 dark:text-white text-sm">
                       <div className="flex items-center gap-2">
-                        <Gift className="w-4 h-4 text-brand-600" />
+                        <Gift className="w-4 h-4 shrink-0 text-brand-600" />
                         <span>{item.name}</span>
                       </div>
                     </td>
@@ -190,28 +176,31 @@ export default function SouvenirNamesPage() {
                     </td>
                     <td className="py-4 px-3">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                        {item.souvenirs_count ?? 0} Varian
+                        {item.souvenirs_count ?? 0} {t('souvenirUi.variants')}
                       </span>
                     </td>
                     <td className="py-4 px-3 text-gray-500">
-                      {item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '-'}
+                      {item.created_at ? new Date(item.created_at).toLocaleDateString(locale === 'id' ? 'id-ID' : 'en-GB') : '-'}
                     </td>
                     <td className="py-4 pl-3 pr-5 text-right">
                       <div className="inline-flex items-center gap-1">
-                        <button
+                        {canManage && <button
                           onClick={() => handleOpenEdit(item)}
                           className="p-1.5 text-gray-500 hover:text-brand-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
-                          title="Edit Nama"
+                          title={t('souvenirUi.editType')}
                         >
                           <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item)}
-                          className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20"
-                          title="Hapus"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        </button>}
+                        {canDelete && (
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(item)}
+                            className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors cursor-pointer"
+                            title={t('souvenirUi.delete')}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -242,37 +231,34 @@ export default function SouvenirNamesPage() {
           <div className="mobile-dialog-panel w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white">
-                {editingItem ? 'Edit Nama Souvenir' : 'Tambah Nama Souvenir Baru'}
+                {editingItem ? t('souvenirUi.editTypeTitle') : t('souvenirUi.newType')}
               </h4>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setIsModalOpen(false)} aria-label={t('common.close')} className="inline-flex min-h-11 min-w-11 items-center justify-center text-gray-400 hover:text-gray-600">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                  Nama Souvenir / Merchandise <span className="text-red-500">*</span>
+                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('souvenirUi.typeName')}<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
-                  placeholder="e.g. Tumbler Pertamina, Jaket Bomber, Payung Lipat"
+                  placeholder={t('souvenirUi.typeExample')}
                   className="w-full mt-1.5 px-3.5 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                  Keterangan Singkat
-                </label>
+                <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">{t('souvenirUi.shortNotes')}</label>
                 <textarea
                   rows={2}
                   value={descInput}
                   onChange={(e) => setDescInput(e.target.value)}
-                  placeholder="Spesifikasi umum atau catatan merchandise..."
+                  placeholder={t('souvenirUi.typeDescriptionExample')}
                   className="w-full mt-1.5 px-3.5 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
                 />
               </div>
@@ -283,9 +269,7 @@ export default function SouvenirNamesPage() {
                   onClick={() => setIsModalOpen(false)}
                   disabled={isSubmitting}
                   className="px-4 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
-                >
-                  Batal
-                </button>
+                >{t('souvenirUi.cancel')}</button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -294,10 +278,10 @@ export default function SouvenirNamesPage() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Menyimpan...</span>
+                      <span>{t('souvenirUi.saving')}</span>
                     </>
                   ) : (
-                    <span>{editingItem ? 'Simpan Perubahan' : 'Tambah'}</span>
+                    <span>{editingItem ? t('souvenirUi.saveChanges') : t('souvenirUi.add')}</span>
                   )}
                 </button>
               </div>

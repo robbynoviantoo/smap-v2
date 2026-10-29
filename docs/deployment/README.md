@@ -98,3 +98,11 @@ untuk pengujian awal.
 ## GitHub Actions
 
 Panduan setup VPS, PM2 dan secrets repo Next tersedia di [github-actions.md](github-actions.md).
+
+### Notifikasi: jangan gunakan Measurement ID sebagai VAPID key
+
+NEXT_PUBLIC_FIREBASE_VAPID_KEY harus berisi public key Web Push certificates dari
+Firebase Console → Project settings → Cloud Messaging, bukan Measurement ID
+Analytics (G-...). Nilai G-... membuat token push gagal walaupun worker aktif.
+Perubahan .env.local memerlukan npm run build lalu restart PM2; restart saja
+tidak memperbarui NEXT_PUBLIC yang sudah tertanam dalam bundle.

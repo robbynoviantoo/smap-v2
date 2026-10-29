@@ -13,8 +13,15 @@ const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
 const tokenKey = 'smap_fcm_token';
 let registrationPromise: Promise<ServiceWorkerRegistration> | undefined;
 
-export const pushConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.messagingSenderId && firebaseConfig.appId && vapidKey);
+export const pushConfigurationError = !firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.messagingSenderId || !firebaseConfig.appId || !vapidKey
+  ? 'missing'
+  : /^B[A-Za-z0-9_-]{86}=?$/.test(vapidKey) ? null : 'invalid-vapid';
+export const pushConfigured = pushConfigurationError === null;
 export const storedPushToken = () => localStorage.getItem(tokenKey);
+const enabledUserKey = 'smap_push_enabled_user';
+export const wasPushEnabled = (userId: number) => Boolean(storedPushToken() && localStorage.getItem(enabledUserKey) === String(userId));
+export const rememberPushEnabled = (userId: number) => localStorage.setItem(enabledUserKey, String(userId));
+export const forgetPushEnabled = () => localStorage.removeItem(enabledUserKey);
 
 export function registerPushWorker() {
   if (!registrationPromise) {
@@ -41,6 +48,7 @@ export async function getPushClient() {
 }
 
 export async function syncPushToken(isActive: () => boolean) {
+  if (!pushConfigured) throw new Error('push-configuration');
   const sessionToken = Cookies.get('token') || localStorage.getItem('token');
   const [{ sdk, messaging }, registration] = await Promise.all([getPushClient(), registerPushWorker()]);
   const token = await sdk.getToken(messaging, { vapidKey, serviceWorkerRegistration: registration });
@@ -54,6 +62,7 @@ export async function syncPushToken(isActive: () => boolean) {
 
 export async function clearPushSubscription() {
   localStorage.removeItem(tokenKey);
+  forgetPushEnabled();
   const registration = await navigator.serviceWorker?.getRegistration('/');
   const notifications = await registration?.getNotifications();
   notifications?.forEach((notification) => notification.close());
