@@ -16,6 +16,15 @@ export interface AssetFilterParams {
   sort_order?: 'asc' | 'desc';
 }
 
+function assetFormData(data: Partial<Asset>, imageFile: File) {
+  const form = new FormData();
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== undefined && value !== null) form.append(key, String(value));
+  }
+  form.append('image', imageFile);
+  return form;
+}
+
 export const assetService = {
   async generateAssetNumber() {
     const res = await apiClient.get<ApiResponse<{ no_asset: string }>>('/assets/generate-no-asset');
@@ -24,6 +33,11 @@ export const assetService = {
 
   async getAssets(params?: AssetFilterParams) {
     const res = await apiClient.get<ApiResponse<Asset[]>>('/assets', { params });
+    return res.data;
+  },
+
+  async exportAssets(params?: AssetFilterParams) {
+    const res = await apiClient.get<Blob>('/assets/export', { params, responseType: 'blob' });
     return res.data;
   },
 
@@ -48,12 +62,25 @@ export const assetService = {
     return res.data;
   },
 
-  async createAsset(data: Partial<Asset>) {
-    const res = await apiClient.post<ApiResponse<Asset>>('/assets', data);
+  async createAsset(data: Partial<Asset>, imageFile?: File) {
+    const res = imageFile
+      ? await apiClient.post<ApiResponse<Asset>>('/assets', assetFormData(data, imageFile), {
+          headers: { 'Content-Type': undefined },
+        })
+      : await apiClient.post<ApiResponse<Asset>>('/assets', data);
     return res.data;
   },
 
-  async updateAsset(id: number | string, data: Partial<Asset>) {
+  async updateAsset(id: number | string, data: Partial<Asset>, imageFile?: File) {
+    if (imageFile) {
+      const form = assetFormData(data, imageFile);
+      // PHP parses multipart files on POST; Laravel honors the method override.
+      form.append('_method', 'PUT');
+      const res = await apiClient.post<ApiResponse<Asset>>(`/assets/${id}`, form, {
+        headers: { 'Content-Type': undefined },
+      });
+      return res.data;
+    }
     const res = await apiClient.put<ApiResponse<Asset>>(`/assets/${id}`, data);
     return res.data;
   },

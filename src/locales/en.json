@@ -1031,6 +1031,47 @@
       "name_required": "Asset name is required.",
       "save_failed": "Failed to save the asset.",
       "close": "Close asset form"
+    },
+    "feedback": {
+      "delete_title": "Delete This Asset?",
+      "delete_description": "The asset will be moved to the deletion archive.",
+      "deleted": "Asset deleted successfully.",
+      "delete_failed": "Failed to Delete Asset",
+      "server_error": "A server error occurred.",
+      "updated": "Asset updated successfully!",
+      "created": "New asset added successfully!",
+      "save_failed": "Failed to Save Asset",
+      "check_form": "Please check your form entries.",
+      "borrowed": "Asset borrowing request submitted!",
+      "returned": "Asset returned successfully!",
+      "transaction_failed": "Failed to Process Transaction",
+      "export_preparing": "Preparing Excel file...",
+      "exported": "Excel file downloaded successfully!",
+      "export_failed": "Download Failed",
+      "export_error": "Unable to download the Excel file."
+    },
+    "filters": {
+      "title": "Filter Assets",
+      "active": "Filters Active",
+      "reset": "Clear All Filters",
+      "category_placeholder": "Select Category",
+      "category_search": "Search categories...",
+      "status_placeholder": "Select Condition",
+      "status_search": "Search conditions...",
+      "location_placeholder": "Select Location",
+      "location_search": "Search rooms...",
+      "building_placeholder": "Select Building",
+      "building_search": "Search buildings...",
+      "brand_placeholder": "Select Brand",
+      "brand_search": "Search brands..."
+    },
+    "view": {
+      "empty": "No assets found.",
+      "uncategorized": "Uncategorized",
+      "qr": "Show QR Code",
+      "qr_print": "Enlarge and print QR code",
+      "total_units": "Total Units",
+      "units": "{count} units"
     }
   },
   "nav": {
@@ -1065,7 +1106,16 @@
     "broadcast_notif": "Broadcast Notif",
     "notification_settings": "Notification Settings",
     "asset_transactions": "Asset Transactions",
-    "asset_deleted": "Deleted Assets"
+    "asset_deleted": "Deleted Assets",
+    "workspace": "Workspace",
+    "users_group": "Users",
+    "main_navigation": "Main navigation",
+    "close_navigation": "Close navigation",
+    "need_help": "Need a hand?",
+    "help_caption": "Guides & support",
+    "app_caption": "Asset Management",
+    "toggle_navigation": "Toggle navigation",
+    "toggle_theme": "Toggle theme"
   },
   "common": {
     "save": "Save",
@@ -1083,7 +1133,13 @@
     "no": "No",
     "loading": "Loading...",
     "no_data": "No data available",
-    "select": "Select...",
+    "select": {
+      "placeholder": "Select an option...",
+      "search": "Search options...",
+      "clear": "Clear selection",
+      "all": "All options",
+      "empty": "No options found"
+    },
     "all": "All",
     "language": "Language",
     "back": "Back",
@@ -1196,5 +1252,10 @@
     "error": "Something went wrong!",
     "close": "Close",
     "ok": "OK"
+  },
+  "chatPresence": {
+    "online": "Online",
+    "offline": "Offline",
+    "unavailable": "Status unavailable"
   }
 }

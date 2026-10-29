@@ -178,7 +178,7 @@ export default function GlobalSearch() {
             setIsOpen(true);
           }}
           placeholder={locale === 'en' ? "Search menus, assets, AST-XXXXXX..." : "Cari menu, aset, AST-XXXXXX..."}
-          className="h-10 w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/[0.03] py-2 pl-10 pr-16 text-xs text-gray-800 dark:text-gray-200 placeholder:text-gray-400 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all shadow-2xs"
+          className="h-10 w-full rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-white/[0.03] py-2 pl-10 pr-10 sm:pr-16 text-xs text-gray-800 dark:text-gray-200 placeholder:text-gray-400 focus:border-brand-500 focus:bg-white dark:focus:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all shadow-2xs"
         />
 
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -211,7 +211,7 @@ export default function GlobalSearch() {
 
       {/* Dropdown Results Overlay */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-12 z-[90] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden divide-y divide-gray-100 dark:divide-gray-800 animate-in fade-in zoom-in-98 duration-150 max-h-[480px] overflow-y-auto">
+        <div className="absolute left-0 right-0 top-12 z-[90] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden divide-y divide-gray-100 dark:divide-gray-800 animate-in fade-in zoom-in-98 duration-150 max-h-[min(480px,calc(100dvh-150px))] overflow-y-auto">
           {/* Section: Menu & Halaman */}
           {filteredNav.length > 0 && (
             <div className="p-2">

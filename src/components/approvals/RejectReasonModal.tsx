@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from 'react';
 import { useTranslation } from '@/context/LanguageContext';
 import { X, AlertTriangle, Loader2 } from 'lucide-react';
@@ -21,6 +22,8 @@ export default function RejectReasonModal({
   const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useBodyScrollLock(isOpen);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +40,7 @@ export default function RejectReasonModal({
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
+      <div className="mobile-dialog-panel w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
         <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
           <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
             <AlertTriangle className="w-5 h-5" />

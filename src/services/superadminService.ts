@@ -111,7 +111,7 @@ export const superadminService = {
   },
 
   async deleteBackup(filename: string) {
-    const res = await apiClient.post<ApiResponse<any>>('/backups/delete', { file: filename });
+    const res = await apiClient.post<ApiResponse<any>>('/backups/delete', { filename });
     return res.data;
   },
 

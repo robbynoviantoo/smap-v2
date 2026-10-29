@@ -1,5 +1,6 @@
 "use client";
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState, useEffect } from "react";
 import AssetFormSection from "./AssetFormSection";
 import Button from "@/components/ui/button/Button";
@@ -118,6 +119,8 @@ export default function AssetFormModal({
     };
   }, [imagePreview]);
 
+  useBodyScrollLock(isOpen);
+
   if (!isOpen) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +171,7 @@ export default function AssetFormModal({
       <div className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
+      <div className="mobile-dialog-panel relative w-full max-w-5xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-800/60 shrink-0">
           <div className="flex items-center gap-3">
@@ -188,14 +191,14 @@ export default function AssetFormModal({
             type="button"
             onClick={onClose}
             aria-label={t("assets.form.close")}
-            className="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+            className="shrink-0 p-1.5 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Spacious Form Body with Full text-sm Typography */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5 text-sm">
+        <form onSubmit={handleSubmit} className="min-h-0 overflow-y-auto p-4 sm:p-6 space-y-5 text-sm">
           {errorMsg && (
             <div className="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl dark:bg-red-900/30 dark:text-red-300 dark:border-red-800">
               {errorMsg}
@@ -266,7 +269,7 @@ export default function AssetFormModal({
               </div>
 
               {/* Merk & Satuan (Side-by-side) */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
                     {t("assets.form.brand")}
@@ -362,7 +365,7 @@ export default function AssetFormModal({
                 <label className="font-semibold text-gray-700 dark:text-gray-200 text-sm block mb-1.5">
                   {t("assets.form.condition")}
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {([
                     { val: "good", label: t("assets.form.good"), color: "border-green-500 text-green-700 bg-green-50 dark:bg-green-950/40 dark:text-green-300" },
                     { val: "maintenance", label: t("assets.form.maintenance"), color: "border-yellow-500 text-yellow-700 bg-yellow-50 dark:bg-yellow-950/40 dark:text-yellow-300" },
@@ -385,7 +388,7 @@ export default function AssetFormModal({
               </div>
 
               {/* Tanggal Perawatan (Side-by-side) */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold text-gray-700 dark:text-gray-200 text-xs block mb-1.5 truncate">
                     {t("assets.form.last_maintenance")}

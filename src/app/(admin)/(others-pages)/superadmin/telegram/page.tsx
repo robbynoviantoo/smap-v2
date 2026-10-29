@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { superadminService, TelegramUserItem, TelegramBotStatus } from '@/services/superadminService';
@@ -25,6 +26,7 @@ export default function TelegramSettingsPage() {
   const [description, setDescription] = useState('');
   const [webhookInput, setWebhookInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  useBodyScrollLock(isModalOpen);
 
   const { data: usersData, isLoading: isLoadingUsers, refetch: refetchUsers } = useQuery({
     queryKey: ['superadmin', 'telegram-users'],
@@ -288,7 +290,7 @@ export default function TelegramSettingsPage() {
       {/* Modal Tambah User */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-sm bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
+          <div className="mobile-dialog-panel w-full max-w-sm bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                 Tambah Chat ID Telegram

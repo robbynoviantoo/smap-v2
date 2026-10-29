@@ -1,5 +1,6 @@
 "use client";
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from "react";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -28,6 +29,8 @@ export default function AssetBorrowReturnModal({
   const [remark, setRemark] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useBodyScrollLock(isOpen && !!asset);
+
   if (!isOpen || !asset) return null;
 
   const isBorrow = mode === "borrow";
@@ -51,7 +54,7 @@ export default function AssetBorrowReturnModal({
       <div className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden p-6 z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
+      <div className="mobile-dialog-panel relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden p-6 z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800 mb-4">
           <div className="flex items-center gap-2.5">
             <div className={`p-2 rounded-lg ${isBorrow ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30" : "bg-green-50 text-green-600 dark:bg-green-900/30"}`}>

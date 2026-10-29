@@ -38,7 +38,7 @@ const Calendar: React.FC = () => {
 
   const calendarRef = useRef<FullCalendar>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  const { isExpanded, isMobileOpen } = useSidebar();
   const { isOpen, openModal, closeModal } = useModal();
 
   const calendarsEvents = {
@@ -93,7 +93,7 @@ const Calendar: React.FC = () => {
     return () => {
       timers.forEach((t) => clearTimeout(t));
     };
-  }, [isExpanded, isHovered, isMobileOpen]);
+  }, [isExpanded, isMobileOpen]);
 
   // 2. Continuous ResizeObserver on calendar wrapper: auto-adjusts on ANY container size change
   useEffect(() => {

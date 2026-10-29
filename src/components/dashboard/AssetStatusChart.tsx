@@ -83,7 +83,7 @@ export default function AssetStatusChart({
   const series = [good, maintenance, broken];
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6 shadow-sm flex flex-col justify-between">
+    <div className="min-w-0 overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6 shadow-sm flex flex-col justify-between">
       <div>
         <div className="flex items-center gap-2.5 mb-2">
           <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
@@ -104,7 +104,7 @@ export default function AssetStatusChart({
             <div className="w-48 h-48 rounded-full border-8 border-gray-200 dark:border-gray-800 animate-pulse" />
           ) : (
             <div className="w-full">
-              <ReactApexChart options={chartOptions} series={series} type="donut" height={260} />
+              <ReactApexChart width="100%" options={chartOptions} series={series} type="donut" height={260} />
             </div>
           )}
         </div>

@@ -29,7 +29,8 @@ export function useAssets(params?: AssetFilterParams) {
 
   // Mutation: Create Asset
   const createAssetMutation = useMutation({
-    mutationFn: (newAsset: Partial<Asset>) => assetService.createAsset(newAsset),
+    mutationFn: ({ imageFile, ...data }: Partial<Asset> & { imageFile?: File }) =>
+      assetService.createAsset(data, imageFile),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
     },
@@ -37,8 +38,8 @@ export function useAssets(params?: AssetFilterParams) {
 
   // Mutation: Update Asset
   const updateAssetMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number | string; data: Partial<Asset> }) =>
-      assetService.updateAsset(id, data),
+    mutationFn: ({ id, data, imageFile }: { id: number | string; data: Partial<Asset>; imageFile?: File }) =>
+      assetService.updateAsset(id, data, imageFile),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
     },

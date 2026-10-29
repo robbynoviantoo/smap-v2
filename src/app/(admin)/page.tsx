@@ -27,7 +27,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => refetch()}
             disabled={isLoading}
@@ -62,7 +62,7 @@ export default function DashboardPage() {
       {/* Visual Analytics Grid */}
       <div className="grid grid-cols-12 gap-6">
         {/* Monthly Maintenance Forecast (8 Cols on xl) */}
-        <div className="col-span-12 xl:col-span-8">
+        <div className="min-w-0 col-span-12 xl:col-span-8">
           <MonthlyMaintenanceChart
             data={stats?.maintenance_forecast}
             isLoading={isLoading}
@@ -70,7 +70,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Physical Status Distribution Donut (4 Cols on xl) */}
-        <div className="col-span-12 xl:col-span-4">
+        <div className="min-w-0 col-span-12 xl:col-span-4">
           <AssetStatusChart
             distribution={stats?.status_distribution}
             isLoading={isLoading}
@@ -80,12 +80,12 @@ export default function DashboardPage() {
 
       {/* Quick Approval Banner & Upcoming Maintenance Table */}
       <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-12 lg:col-span-8">
+        <div className="min-w-0 col-span-12 lg:col-span-8">
           <UpcomingMaintenanceTable />
         </div>
 
         {/* Approval Queue Quick Action Card */}
-        <div className="col-span-12 lg:col-span-4 flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6 shadow-sm">
+        <div className="min-w-0 col-span-12 lg:col-span-4 flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6 shadow-sm">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 flex items-center justify-center">

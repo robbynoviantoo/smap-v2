@@ -168,6 +168,26 @@
   --z-index-999999: 999999;
 }
 
+/* Neutral charcoal surfaces shared by pages, forms, overlays and vendor widgets. */
+:root.dark {
+  color-scheme: dark;
+  --color-black: #101010;
+  --color-gray-25: #fcfcfc;
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f4f4f4;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #3a3a3a;
+  --color-gray-800: #282828;
+  --color-gray-900: #171717;
+  --color-gray-950: #101010;
+  --color-gray-dark: #1c1c1c;
+  --shadow-datepicker: -5px 0 0 #282828, 5px 0 0 #282828;
+}
+
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
@@ -277,7 +297,7 @@
 }
 
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #344054;
+  background-color: var(--color-gray-700);
 }
 
 
@@ -496,7 +516,7 @@ span.flatpickr-weekday,
   @apply max-w-full overflow-x-auto custom-scrollbar;
 }
 .fc-dayGridMonth-view.fc-view.fc-daygrid {
-  @apply min-w-[718px];
+  @apply w-full min-w-0;
 }
 .fc .fc-scrollgrid-section > * {
   border-right-width: 0;
@@ -758,4 +778,32 @@ span.flatpickr-weekday,
 }
 .swal2-popup {
   font-family: inherit !important;
+}
+
+/* Dialogs stay inside the visual viewport, including short landscape screens. */
+.mobile-dialog-panel {
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 767px) {
+  /* Avoid Safari zooming the page when focusing a compact form field. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: 16px;
+  }
+  .fc .fc-toolbar.fc-header-toolbar { flex-wrap: wrap; gap: 0.75rem; }
+  .fc .fc-toolbar-title { font-size: 1.125rem; }
+  .fc .fc-col-header-cell-cushion { padding: 8px 2px !important; font-size: 11px; }
+  .fc .fc-daygrid-day-number { padding: 4px !important; font-size: 12px; }
+  .fc .fc-daygrid-day { min-height: 72px; padding: 0; }
+  .fc .fc-daygrid-day-top { flex-direction: row-reverse !important; }
+  .fc .fc-event-title { overflow: hidden; text-overflow: ellipsis; }
+}
+
+@layer base {
+  button > svg, a > svg { flex-shrink: 0; }
+  select { min-width: 0; max-width: 100%; }
 }

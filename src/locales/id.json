@@ -848,6 +848,47 @@
       "name_required": "Nama aset wajib diisi.",
       "save_failed": "Gagal menyimpan data aset.",
       "close": "Tutup form aset"
+    },
+    "feedback": {
+      "delete_title": "Hapus Aset Ini?",
+      "delete_description": "Data aset akan dipindahkan ke riwayat arsip penghapusan.",
+      "deleted": "Aset berhasil dihapus.",
+      "delete_failed": "Gagal Menghapus Aset",
+      "server_error": "Terjadi kesalahan pada server.",
+      "updated": "Data aset berhasil diperbarui!",
+      "created": "Aset baru berhasil ditambahkan!",
+      "save_failed": "Gagal Menyimpan Aset",
+      "check_form": "Periksa kembali input form Anda.",
+      "borrowed": "Peminjaman aset berhasil diajukan!",
+      "returned": "Aset berhasil dikembalikan!",
+      "transaction_failed": "Gagal Memproses Transaksi",
+      "export_preparing": "Menyiapkan file Excel...",
+      "exported": "File Excel berhasil diunduh!",
+      "export_failed": "Gagal Download",
+      "export_error": "Terjadi kendala saat mengunduh file Excel."
+    },
+    "filters": {
+      "title": "Filter Data Spesifik",
+      "active": "Filter Aktif",
+      "reset": "Bersihkan Semua Filter",
+      "category_placeholder": "Pilih Kategori",
+      "category_search": "Ketik nama kategori...",
+      "status_placeholder": "Pilih Kondisi",
+      "status_search": "Ketik status...",
+      "location_placeholder": "Pilih Lokasi",
+      "location_search": "Ketik nama ruangan...",
+      "building_placeholder": "Pilih Gedung",
+      "building_search": "Ketik gedung...",
+      "brand_placeholder": "Pilih Merk",
+      "brand_search": "Ketik merk..."
+    },
+    "view": {
+      "empty": "Tidak ada data aset yang ditemukan.",
+      "uncategorized": "Tanpa Kategori",
+      "qr": "Tampilkan QR Code",
+      "qr_print": "Klik untuk perbesar & cetak QR Code",
+      "total_units": "Total Unit",
+      "units": "{count} unit"
     }
   },
   "nav": {
@@ -882,7 +923,16 @@
     "broadcast_notif": "Broadcast Notif",
     "notification_settings": "Pengaturan Notif",
     "asset_transactions": "Transaksi Aset",
-    "asset_deleted": "Tempat Sampah Aset"
+    "asset_deleted": "Tempat Sampah Aset",
+    "workspace": "Ruang Kerja",
+    "users_group": "Pengguna",
+    "main_navigation": "Navigasi utama",
+    "close_navigation": "Tutup navigasi",
+    "need_help": "Butuh bantuan?",
+    "help_caption": "Panduan & dukungan",
+    "app_caption": "Manajemen Aset",
+    "toggle_navigation": "Buka/tutup navigasi",
+    "toggle_theme": "Ganti tema"
   },
   "common": {
     "save": "Simpan",
@@ -900,7 +950,13 @@
     "no": "Tidak",
     "loading": "Memuat...",
     "no_data": "Tidak ada data",
-    "select": "Pilih...",
+    "select": {
+      "placeholder": "Pilih Opsi...",
+      "search": "Cari opsi...",
+      "clear": "Hapus pilihan",
+      "all": "Semua pilihan",
+      "empty": "Tidak ada opsi ditemukan"
+    },
     "all": "Semua",
     "language": "Bahasa",
     "back": "Kembali",
@@ -1025,5 +1081,10 @@
     "error": "Terjadi Kesalahan!",
     "close": "Tutup",
     "ok": "OK"
+  },
+  "chatPresence": {
+    "online": "Online",
+    "offline": "Offline",
+    "unavailable": "Status tidak tersedia"
   }
 }

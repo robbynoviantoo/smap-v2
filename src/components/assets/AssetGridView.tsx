@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import AssetEmptyState from "./AssetEmptyState";
 import { Asset } from "@/types/api";
 import { CardSkeleton } from "@/components/common/Skeleton";
 import { useTranslation } from "@/context/LanguageContext";
@@ -9,12 +10,10 @@ import {
   MapPin,
   Tag,
   ImageIcon,
-  Eye,
   Edit2,
   Trash2,
   ArrowUpRight,
   RotateCcw,
-  PackageSearch,
 } from "lucide-react";
 
 interface AssetGridViewProps {
@@ -45,12 +44,7 @@ export default function AssetGridView({
   }
 
   if (assets.length === 0) {
-    return (
-      <div className="py-16 text-center text-gray-400 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
-        <PackageSearch className="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
-        <p className="text-xs">{t("common.no_data")}</p>
-      </div>
-    );
+    return <AssetEmptyState />;
   }
 
   return (
@@ -117,7 +111,7 @@ export default function AssetGridView({
                 </p>
                 <p className="text-xs text-gray-400 flex items-center gap-1">
                   <Tag className="w-3 h-3 shrink-0" />
-                  <span>{asset.category || "Tanpa Kategori"}{asset.merk && ` • ${asset.merk}`}</span>
+                  <span>{asset.category || t("assets.view.uncategorized")}{asset.merk && ` • ${asset.merk}`}</span>
                 </p>
               </div>
             </div>
@@ -130,7 +124,8 @@ export default function AssetGridView({
               <button
                 type="button"
                 onClick={() => onOpenQr(asset)}
-                title="Tampilkan QR Code"
+                title={t("assets.view.qr")}
+                aria-label={t("assets.view.qr")}
                 className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-xs"
               >
                 <QrCode className="w-3.5 h-3.5" />

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 import { Search, ChevronDown, X, Check } from "lucide-react";
 
 export interface SelectOption {
@@ -17,17 +18,22 @@ interface SearchableSelectProps {
   searchPlaceholder?: string;
   className?: string;
   disabled?: boolean;
+  allLabel?: string;
+  ariaLabelledBy?: string;
 }
 
 export default function SearchableSelect({
   options,
   value,
   onChange,
-  placeholder = "Pilih Opsi...",
-  searchPlaceholder = "Cari opsi...",
+  placeholder,
+  searchPlaceholder,
   className = "",
   disabled = false,
+  allLabel,
+  ariaLabelledBy,
 }: SearchableSelectProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,11 +80,10 @@ export default function SearchableSelect({
   // Auto focus search input on open
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         searchInputRef.current?.focus();
       }, 50);
-    } else {
-      setSearch("");
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -99,7 +104,12 @@ export default function SearchableSelect({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
+        aria-labelledby={ariaLabelledBy}
+        aria-expanded={isOpen}
+        onClick={() => {
+          if (!isOpen) setSearch("");
+          setIsOpen(!isOpen);
+        }}
         className={`w-full h-9.5 px-3 rounded-lg border flex items-center justify-between text-left transition-all cursor-pointer select-none ${
           isOpen
             ? "border-brand-500 ring-2 ring-brand-500/20 bg-white dark:bg-gray-900"
@@ -113,14 +123,14 @@ export default function SearchableSelect({
               : "text-gray-400 dark:text-gray-500"
           }`}
         >
-          {selectedOption ? selectedOption.label : placeholder}
+          {selectedOption ? selectedOption.label : (placeholder ?? t("common.select.placeholder"))}
         </span>
 
         <div className="flex items-center gap-1.5 ml-2 shrink-0">
           {selectedOption && (
             <span
               onClick={handleClear}
-              title="Hapus pilihan"
+              title={t("common.select.clear")}
               className="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition"
             >
               <X className="w-3 h-3" />
@@ -145,7 +155,8 @@ export default function SearchableSelect({
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder={searchPlaceholder}
+                placeholder={searchPlaceholder ?? t("common.select.search")}
+                aria-label={searchPlaceholder ?? t("common.select.search")}
                 className="w-full h-8 pl-7 pr-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs dark:text-white focus:outline-hidden focus:ring-1 focus:ring-brand-500"
               />
               <Search className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-2.5" />
@@ -164,13 +175,13 @@ export default function SearchableSelect({
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
               }`}
             >
-              <span>Semua {placeholder.replace("Pilih ", "")}</span>
+              <span>{allLabel ?? t("common.select.all")}</span>
               {!value && <Check className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />}
             </button>
 
             {filteredOptions.length === 0 ? (
               <div className="py-4 text-center text-gray-400 text-xs">
-                Tidak ada opsi ditemukan
+                {t("common.select.empty")}
               </div>
             ) : (
               filteredOptions.map((opt) => {

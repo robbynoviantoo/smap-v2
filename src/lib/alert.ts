@@ -13,8 +13,8 @@ function dialogLabels() {
 function dialogTheme(danger = false) {
   const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark");
   return {
-    background: isDark ? "#111827" : "#ffffff",
-    color: isDark ? "#f3f4f6" : "#1f2937",
+    background: isDark ? "var(--color-gray-900)" : "#ffffff",
+    color: isDark ? "var(--color-gray-100)" : "#1f2937",
     confirmButtonColor: danger ? "#ef4444" : "#2563eb",
     cancelButtonColor: "#6b7280",
     customClass: {
@@ -86,8 +86,8 @@ export const alert = {
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
-      background: isDark ? "#1f2937" : "#ffffff",
-      color: isDark ? "#f3f4f6" : "#1f2937",
+      background: isDark ? "var(--color-gray-800)" : "#ffffff",
+      color: isDark ? "var(--color-gray-100)" : "#1f2937",
       didOpen: (toast) => {
         toast.onmouseenter = Swal.stopTimer;
         toast.onmouseleave = Swal.resumeTimer;

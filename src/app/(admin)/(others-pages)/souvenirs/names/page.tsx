@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from 'react';
 import { useSouvenirNames } from '@/hooks/api/useSouvenirs';
 import { useTranslation } from '@/context/LanguageContext';
@@ -29,6 +30,7 @@ export default function SouvenirNamesPage() {
   const [nameInput, setNameInput] = useState('');
   const [descInput, setDescInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  useBodyScrollLock(isModalOpen);
 
   const {
     items,
@@ -237,7 +239,7 @@ export default function SouvenirNamesPage() {
       {/* Create / Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
+          <div className="mobile-dialog-panel w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                 {editingItem ? 'Edit Nama Souvenir' : 'Tambah Nama Souvenir Baru'}

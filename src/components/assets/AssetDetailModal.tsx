@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState, useEffect } from 'react';
 import { Asset } from '@/types/api';
 import { assetService } from '@/services/assetService';
@@ -74,6 +75,8 @@ export default function AssetDetailModal({
     }
   }, [isOpen, asset, activeTab]);
 
+  useBodyScrollLock(isOpen && !!asset);
+
   if (!isOpen || !asset) return null;
 
   const statusBadge = (status: string) => {
@@ -97,7 +100,7 @@ export default function AssetDetailModal({
       <div className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
+      <div className="mobile-dialog-panel relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
           <div className="flex items-center gap-3">
@@ -213,7 +216,7 @@ export default function AssetDetailModal({
               </div>
 
               {/* Details Column */}
-              <div className="md:col-span-2 grid grid-cols-2 gap-4 text-xs">
+              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div className="space-y-1">
                   <span className="text-gray-400 flex items-center gap-1">
                     <Tag className="w-3 h-3" /> Kategori
@@ -309,7 +312,7 @@ export default function AssetDetailModal({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
                   <div className="p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
                     <span className="text-gray-400 block text-[10px] uppercase font-semibold">
                       {t('assets.last_service')}
@@ -343,7 +346,7 @@ export default function AssetDetailModal({
                     Belum ada riwayat perbaikan/servis yang tercatat untuk aset ini.
                   </div>
                 ) : (
-                  <div className="rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+                  <div className="rounded-xl border border-gray-200 dark:border-gray-800 overflow-x-auto">
                     <table className="w-full text-left text-xs">
                       <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800 text-gray-500 font-semibold">
                         <tr>

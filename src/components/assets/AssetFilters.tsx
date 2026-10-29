@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useId } from "react";
+import { useTranslation } from "@/context/LanguageContext";
 import SearchableSelect from "@/components/form/SearchableSelect";
 import { SlidersHorizontal, X } from "lucide-react";
 
@@ -41,12 +42,14 @@ export default function AssetFilters({
   buildings = [],
   merks = [],
 }: AssetFiltersProps) {
+  const { t } = useTranslation();
+  const fieldId = useId();
   if (!showFilters) return null;
 
   const statusOptions = [
-    { value: "good", label: "Baik (Good)" },
-    { value: "maintenance", label: "Maintenance" },
-    { value: "broken", label: "Rusak (Broken)" },
+    { value: "good", label: t("assets.status_good") },
+    { value: "maintenance", label: t("assets.status_maintenance") },
+    { value: "broken", label: t("assets.status_broken") },
   ];
 
   const hasActiveFilters = !!(category || status || location || building || merk);
@@ -57,11 +60,11 @@ export default function AssetFilters({
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           <span className="font-bold text-gray-800 dark:text-gray-200">
-            Filter Data Spesifik
+            {t("assets.filters.title")}
           </span>
           {hasActiveFilters && (
             <span className="px-2 py-0.5 text-[10px] font-bold text-brand-600 bg-brand-50 rounded-full dark:bg-brand-900/40 dark:text-brand-300">
-              Filter Aktif
+              {t("assets.filters.active")}
             </span>
           )}
         </div>
@@ -73,83 +76,33 @@ export default function AssetFilters({
             className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400 hover:underline transition cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
-            <span>Bersihkan Semua Filter</span>
+            <span>{t("assets.filters.reset")}</span>
           </button>
         )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {/* Kategori Searchable */}
-        <div>
-          <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-            Kategori
-          </label>
-          <SearchableSelect
-            placeholder="Pilih Kategori"
-            searchPlaceholder="Ketik nama kategori..."
-            options={categories}
-            value={category}
-            onChange={setCategory}
-          />
-        </div>
-
-        {/* Status Searchable */}
-        <div>
-          <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-            Kondisi Aset
-          </label>
-          <SearchableSelect
-            placeholder="Pilih Kondisi"
-            searchPlaceholder="Ketik status..."
-            options={statusOptions}
-            value={status}
-            onChange={setStatus}
-          />
-        </div>
-
-        {/* Lokasi Searchable */}
-        <div>
-          <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-            Lokasi Ruangan
-          </label>
-          <SearchableSelect
-            placeholder="Pilih Lokasi"
-            searchPlaceholder="Ketik nama ruangan..."
-            options={locations}
-            value={location}
-            onChange={setLocation}
-          />
-        </div>
-
-        {/* Gedung Searchable */}
-        <div>
-          <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-            Gedung / Lantai
-          </label>
-          <SearchableSelect
-            placeholder="Pilih Gedung"
-            searchPlaceholder="Ketik gedung..."
-            options={buildings}
-            value={building}
-            onChange={setBuilding}
-          />
-        </div>
-
-        {/* Merk Searchable */}
-        {setMerk && (
-          <div>
-            <label className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
-              Merk / Brand
+        {[
+          { key: "category", label: t("assets.form.category"), options: categories, value: category, onChange: setCategory },
+          { key: "status", label: t("assets.form.condition"), options: statusOptions, value: status, onChange: setStatus },
+          { key: "location", label: t("assets.form.location"), options: locations, value: location, onChange: setLocation },
+          { key: "building", label: t("assets.form.building"), options: buildings, value: building, onChange: setBuilding },
+          ...(setMerk ? [{ key: "brand", label: t("assets.form.brand"), options: merks, value: merk, onChange: setMerk }] : []),
+        ].map((field) => (
+          <div key={field.key}>
+            <label id={`${fieldId}-${field.key}`} className="block font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              {field.label}
             </label>
             <SearchableSelect
-              placeholder="Pilih Merk"
-              searchPlaceholder="Ketik merk..."
-              options={merks}
-              value={merk}
-              onChange={setMerk}
+              ariaLabelledBy={`${fieldId}-${field.key}`}
+              placeholder={t(`assets.filters.${field.key}_placeholder`)}
+              searchPlaceholder={t(`assets.filters.${field.key}_search`)}
+              options={field.options}
+              value={field.value}
+              onChange={field.onChange}
             />
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

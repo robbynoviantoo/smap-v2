@@ -7,6 +7,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
+import { ChatRealtimeProvider } from "@/hooks/api/useChatRealtime";
 
 export default function AdminLayout({
   children,
@@ -15,7 +16,7 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
-  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  const { isExpanded, isMobileOpen } = useSidebar();
 
   useEffect(() => {
     const token =
@@ -47,24 +48,27 @@ export default function AdminLayout({
   // Dynamic class for main content margin based on sidebar state
   const mainContentMargin = isMobileOpen
     ? "ml-0"
-    : isExpanded || isHovered
+    : isExpanded
     ? "lg:ml-[290px]"
     : "lg:ml-[90px]";
 
   return (
+    <ChatRealtimeProvider>
     <div className="min-h-screen xl:flex">
       {/* Sidebar and Backdrop */}
       <AppSidebar />
       <Backdrop />
       {/* Main Content Area */}
       <div
-        className={`flex-1 transition-all duration-300 ease-in-out ${mainContentMargin}`}
+        inert={isMobileOpen}
+        className={`min-w-0 flex-1 transition-[margin] duration-300 ease-out motion-reduce:transition-none ${mainContentMargin}`}
       >
         {/* Header */}
         <AppHeader />
         {/* Page Content */}
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
+        <main className="min-w-0 p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</main>
       </div>
     </div>
+    </ChatRealtimeProvider>
   );
 }

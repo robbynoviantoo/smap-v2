@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { superadminService } from '@/services/superadminService';
@@ -39,6 +40,7 @@ export default function UsersManagementPage() {
   const [noHandphone, setNoHandphone] = useState('');
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  useBodyScrollLock(isModalOpen);
 
   const { data: usersData, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['superadmin', 'users', { page, q: search, role: roleFilter }],
@@ -193,7 +195,7 @@ export default function UsersManagementPage() {
               setRoleFilter(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="min-w-0 flex-1 px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           >
             <option value="">Semua Role</option>
             {availableRoles.map((r) => (
@@ -346,7 +348,7 @@ export default function UsersManagementPage() {
       {/* Modal: Tambah / Edit Pengguna */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-lg bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
+          <div className="mobile-dialog-panel w-full max-w-lg bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                 {editingUser ? 'Edit Akun Pengguna' : 'Tambah Pengguna Baru'}
@@ -357,7 +359,7 @@ export default function UsersManagementPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                     Nama Depan <span className="text-red-500">*</span>

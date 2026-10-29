@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/api-client';
+import { useChatRealtime } from '@/hooks/api/useChatRealtime';
 import alert from '@/lib/alert';
+import { useTranslation } from '@/context/LanguageContext';
 import { 
   MessageSquare, 
   Send, 
@@ -42,6 +44,10 @@ interface ChatMessage {
 
 export default function ChatPage() {
   const queryClient = useQueryClient();
+  const { isRealtime, presenceReady, onlineIds } = useChatRealtime();
+  const { t } = useTranslation();
+  const presenceText = (id: number) => t(!presenceReady ? 'chatPresence.unavailable' : onlineIds.includes(id) ? 'chatPresence.online' : 'chatPresence.offline');
+  const presenceColor = (id: number) => presenceReady && onlineIds.includes(id) ? 'bg-emerald-500' : 'bg-gray-400';
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
   const [search, setSearch] = useState('');
   const [messageText, setMessageText] = useState('');
@@ -52,13 +58,13 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // 1. Fetch user list
-  const { data: usersData, refetch: refetchUsers } = useQuery({
+  const { data: usersData } = useQuery({
     queryKey: ['chat', 'users'],
     queryFn: async () => {
       const res = await apiClient.get('/chat/users');
       return res.data?.data || [];
     },
-    refetchInterval: 5000, // Poll every 5s for new messages/contacts
+    refetchInterval: isRealtime ? 30000 : 5000,
   });
 
   const users: ChatUser[] = usersData || [];
@@ -69,10 +75,11 @@ export default function ChatPage() {
     queryFn: async () => {
       if (!selectedUser) return { messages: [] };
       const res = await apiClient.get(`/chat/messages/${selectedUser.id}`);
+      void queryClient.invalidateQueries({ queryKey: ['chat', 'users'] });
       return res.data?.data || { messages: [] };
     },
     enabled: Boolean(selectedUser),
-    refetchInterval: selectedUser ? 3000 : false, // Poll every 3s when conversation is active
+    refetchInterval: selectedUser ? (isRealtime ? 30000 : 3000) : false,
   });
 
   const messages: ChatMessage[] = conversationData?.messages || [];
@@ -128,7 +135,7 @@ export default function ChatPage() {
   });
 
   return (
-    <div className="h-[calc(100vh-140px)] flex bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
+    <div className="h-[calc(100dvh-180px)] lg:h-[calc(100dvh-140px)] min-h-80 flex bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-3xl overflow-hidden shadow-sm">
       {/* Left Sidebar: Contact list */}
       <div
         className={`w-full sm:w-80 md:w-96 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 flex flex-col ${
@@ -179,7 +186,7 @@ export default function ChatPage() {
                       <div className="w-10 h-10 rounded-2xl bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 flex items-center justify-center font-bold text-xs uppercase">
                         {fullName.charAt(0)}
                       </div>
-                      <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-gray-900" />
+                      <span role="img" aria-label={presenceText(u.id)} title={presenceText(u.id)} className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-gray-900 ${presenceColor(u.id)}`} />
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -236,8 +243,8 @@ export default function ChatPage() {
                   {`${selectedUser.first_name || ''} ${selectedUser.last_name || ''}`.trim() || selectedUser.name}
                 </h3>
                 <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span>{selectedUser.email}</span>
+                  <span aria-hidden="true" className={`w-1.5 h-1.5 rounded-full ${presenceColor(selectedUser.id)}`} />
+                  <span role="status">{presenceText(selectedUser.id)}</span>
                 </div>
               </div>
             </div>

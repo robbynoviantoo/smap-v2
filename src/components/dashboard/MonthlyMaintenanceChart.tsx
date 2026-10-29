@@ -113,7 +113,7 @@ export default function MonthlyMaintenanceChart({
   ];
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6 shadow-sm">
+    <div className="min-w-0 overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] sm:p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
@@ -143,7 +143,7 @@ export default function MonthlyMaintenanceChart({
           </div>
         ) : (
           <div className="w-full">
-            <ReactApexChart options={chartOptions} series={series} type="bar" height={320} />
+            <ReactApexChart width="100%" options={chartOptions} series={series} type="bar" height={320} />
           </div>
         )}
       </div>

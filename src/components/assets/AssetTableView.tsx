@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import QRCode from "react-qr-code";
+import AssetEmptyState from "./AssetEmptyState";
 import { Asset } from "@/types/api";
 import { TableSkeleton } from "@/components/common/Skeleton";
 import { useTranslation } from "@/context/LanguageContext";
@@ -12,7 +13,6 @@ import {
   Trash2,
   ArrowUpRight,
   RotateCcw,
-  PackageSearch,
 } from "lucide-react";
 
 interface AssetTableViewProps {
@@ -64,12 +64,7 @@ export default function AssetTableView({
   }
 
   if (grouped.length === 0) {
-    return (
-      <div className="py-16 text-center text-gray-400 border border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
-        <PackageSearch className="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600 mb-2" />
-        <p className="text-xs">Tidak ada data aset yang ditemukan.</p>
-      </div>
-    );
+    return <AssetEmptyState />;
   }
 
   return (
@@ -79,10 +74,10 @@ export default function AssetTableView({
           <tr>
             <th className="px-4 py-3">{t("assets.table_name")}</th>
             <th className="px-4 py-3">{t("assets.table_category")}</th>
-            <th className="px-4 py-3">Sub Kategori</th>
+            <th className="px-4 py-3">{t("assets.form.subcategory")}</th>
             <th className="px-4 py-3">{t("assets.table_location")}</th>
             <th className="px-4 py-3">{t("assets.table_condition")}</th>
-            <th className="px-4 py-3 text-center">Total Unit</th>
+            <th className="px-4 py-3 text-center">{t("assets.view.total_units")}</th>
             <th className="px-4 py-3 text-center">{t("common.actions")}</th>
           </tr>
         </thead>
@@ -140,7 +135,7 @@ export default function AssetTableView({
 
                   <td className="px-4 py-3.5 text-center">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300">
-                      {group.totalCount} Unit
+                      {t("assets.view.units", { count: group.totalCount })}
                     </span>
                   </td>
 
@@ -173,7 +168,8 @@ export default function AssetTableView({
                                     e.stopPropagation();
                                     onOpenQr(item);
                                   }}
-                                  title="Klik untuk perbesar & cetak QR Code"
+                                  title={t("assets.view.qr_print")}
+                                  aria-label={t("assets.view.qr_print")}
                                   className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white hover:bg-gray-50 dark:hover:bg-gray-700 hover:ring-2 hover:ring-brand-500/20 transition cursor-pointer shrink-0"
                                 >
                                   <div className="w-[38px] h-[38px] flex items-center justify-center bg-white p-0.5">

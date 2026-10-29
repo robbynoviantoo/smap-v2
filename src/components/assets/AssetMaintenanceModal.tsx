@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState, useEffect } from 'react';
 import { Asset } from '@/types/api';
 import { assetService } from '@/services/assetService';
@@ -39,6 +40,8 @@ export default function AssetMaintenanceModal({
       setNotes('');
     }
   }, [asset, mode, isOpen]);
+
+  useBodyScrollLock(isOpen && !!asset);
 
   if (!isOpen || !asset) return null;
 
@@ -113,7 +116,7 @@ export default function AssetMaintenanceModal({
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div className="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+      <div className="mobile-dialog-panel relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/40">
           <div className="flex items-center gap-3">

@@ -35,10 +35,13 @@ export default function UserDropdown() {
   return (
     <div className="relative">
       <button
+        type="button"
+        aria-label={t("nav.user_profile")}
+        aria-expanded={isOpen}
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11 relative bg-gray-100 dark:bg-gray-800">
+        <span className="lg:mr-3 shrink-0 overflow-hidden rounded-full h-11 w-11 relative bg-gray-100 dark:bg-gray-800">
           <Image
             width={44}
             height={44}
@@ -46,15 +49,15 @@ export default function UserDropdown() {
             alt={displayName}
             className="object-cover h-full w-full"
             onError={(e) => {
-              (e.target as any).src = "/images/user/owner.jpg";
+              e.currentTarget.src = "/images/user/owner.jpg";
             }}
           />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">{user?.first_name || user?.name || "User"}</span>
+        <span className="hidden max-w-32 truncate lg:block mr-1 font-medium text-theme-sm">{user?.first_name || user?.name || "User"}</span>
 
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
+          className={`hidden lg:block stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
           width="18"
@@ -76,13 +79,13 @@ export default function UserDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+        className="absolute right-0 mt-[17px] flex w-[260px] max-w-[calc(100vw-24px)] max-h-[calc(100dvh-88px)] overflow-y-auto flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
         <div>
-          <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
+          <span className="block break-words font-medium text-gray-700 text-theme-sm dark:text-gray-400">
             {displayName}
           </span>
-          <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
+          <span className="mt-0.5 block break-all text-theme-xs text-gray-500 dark:text-gray-400">
             {displayEmail}
           </span>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from "react";
 import QRCode from "react-qr-code";
 import { Asset } from "@/types/api";
@@ -19,6 +20,8 @@ export default function AssetBulkPrintQrModal({
   const [selectedIds, setSelectedIds] = useState<number[]>(
     assets.map((a) => a.id)
   );
+
+  useBodyScrollLock(isOpen);
 
   if (!isOpen) return null;
 
@@ -42,7 +45,7 @@ export default function AssetBulkPrintQrModal({
       <div className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
+      <div className="mobile-dialog-panel relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] z-10 border border-gray-100 dark:border-gray-800 animate-in fade-in zoom-in-95 duration-200">
         {/* Header (Hidden on Print) */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-purple-50/50 dark:bg-purple-950/20 print:hidden">
           <div className="flex items-center gap-2.5">

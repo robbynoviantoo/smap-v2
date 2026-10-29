@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from 'react';
 import { useSouvenirTransactions, useSouvenirs } from '@/hooks/api/useSouvenirs';
 import TablePagination from '@/components/common/TablePagination';
@@ -43,6 +44,7 @@ export default function SouvenirTransactionsPage() {
   const [returnNotes, setReturnNotes] = useState('');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  useBodyScrollLock(isCreateOpen || !!finishingItem);
 
   const {
     items,
@@ -164,7 +166,7 @@ export default function SouvenirTransactionsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/souvenirs"
             className="px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 shadow-sm"
@@ -204,7 +206,7 @@ export default function SouvenirTransactionsPage() {
               setStatus(e.target.value);
               setPage(1);
             }}
-            className="px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="min-w-0 flex-1 px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           >
             <option value="">Semua Status</option>
             <option value="open">Sedang Berlangsung (Open)</option>
@@ -361,7 +363,7 @@ export default function SouvenirTransactionsPage() {
       {/* Modal Catat Distribusi */}
       {isCreateOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
+          <div className="mobile-dialog-panel w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                 Catat Distribusi Souvenir Keluar
@@ -422,7 +424,7 @@ export default function SouvenirTransactionsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
                     Jumlah Keluar (Pcs) <span className="text-red-500">*</span>
@@ -489,7 +491,7 @@ export default function SouvenirTransactionsPage() {
       {/* Modal Selesaikan Transaksi */}
       {finishingItem && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
+          <div className="mobile-dialog-panel w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                 Selesaikan Transaksi: {finishingItem.training_name}

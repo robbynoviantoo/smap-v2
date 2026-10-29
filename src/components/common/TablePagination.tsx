@@ -99,7 +99,7 @@ export default function TablePagination({
       </div>
 
       {/* Right: Page Buttons */}
-      <nav aria-label={t("pagination.navigation")} className="flex items-center gap-1">
+      <nav aria-label={t("pagination.navigation")} className="flex max-w-full flex-wrap items-center gap-1">
         {/* Previous Button */}
         <button
           type="button"

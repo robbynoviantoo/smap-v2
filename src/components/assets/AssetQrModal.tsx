@@ -1,5 +1,6 @@
 "use client";
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from "react";
 import QRCode from "react-qr-code";
 import { Asset } from "@/types/api";
@@ -13,6 +14,8 @@ interface AssetQrModalProps {
 
 export default function AssetQrModal({ isOpen, onClose, asset }: AssetQrModalProps) {
   const [copied, setCopied] = useState(false);
+
+  useBodyScrollLock(isOpen && !!asset);
 
   if (!isOpen || !asset) return null;
 
@@ -37,7 +40,7 @@ export default function AssetQrModal({ isOpen, onClose, asset }: AssetQrModalPro
       <div className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" onClick={onClose} />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden p-6 z-10 border border-gray-100 dark:border-gray-800 text-center animate-in fade-in zoom-in-95 duration-200">
+      <div className="mobile-dialog-panel relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden p-6 z-10 border border-gray-100 dark:border-gray-800 text-center animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <QrCode className="w-5 h-5 text-brand-600 dark:text-brand-400" />

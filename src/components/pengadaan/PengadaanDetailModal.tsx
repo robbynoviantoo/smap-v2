@@ -1,5 +1,6 @@
 'use client';
 
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import React, { useState } from 'react';
 import { 
   X, 
@@ -60,6 +61,8 @@ export default function PengadaanDetailModal({
   const [convertBuilding, setConvertBuilding] = useState('');
   const [convertRemarks, setConvertRemarks] = useState('');
   const [isConverting, setIsConverting] = useState(false);
+
+  useBodyScrollLock(isOpen && !!item);
 
   if (!isOpen || !item) return null;
 
@@ -126,7 +129,7 @@ export default function PengadaanDetailModal({
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-      <div className="relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="mobile-dialog-panel relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/40">
           <div className="flex items-center gap-3">
@@ -421,7 +424,7 @@ export default function PengadaanDetailModal({
         {/* Modal Sub-layer: Disposition Modal */}
         {convertingDelivery && (
           <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-            <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
+            <div className="mobile-dialog-panel w-full max-w-md bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-2xl border border-gray-100 dark:border-gray-800 space-y-4">
               <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
                 <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                   Konversi ke Master Aset

@@ -4,11 +4,10 @@ import React from "react";
 const Backdrop: React.FC = () => {
   const { isMobileOpen, toggleMobileSidebar } = useSidebar();
 
-  if (!isMobileOpen) return null;
-
   return (
     <div
-      className="fixed inset-0 z-40 bg-gray-900/50 lg:hidden"
+      aria-hidden="true"
+      className={`fixed inset-0 z-[45] bg-black/50 transition-opacity duration-300 motion-reduce:transition-none lg:hidden ${isMobileOpen ? "opacity-100" : "pointer-events-none opacity-0"}`}
       onClick={toggleMobileSidebar}
     />
   );

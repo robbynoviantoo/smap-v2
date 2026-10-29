@@ -18,7 +18,7 @@ import AssetImportModal from "@/components/assets/AssetImportModal";
 import AssetMaintenanceModal, { MaintenanceMode } from "@/components/assets/AssetMaintenanceModal";
 import TablePagination from "@/components/common/TablePagination";
 import alert from "@/lib/alert";
-import apiClient from "@/lib/api-client";
+import { isAxiosError } from "axios";
 import {
   Search,
   SlidersHorizontal,
@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 
 export default function AssetsPage() {
-  const { t, locale } = useTranslation();
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -104,6 +104,7 @@ export default function AssetsPage() {
     category: category || undefined,
     status: status || undefined,
     location: location || undefined,
+    building: building || undefined,
     merk: merk || undefined,
     page,
     per_page: perPage,
@@ -191,17 +192,17 @@ export default function AssetsPage() {
 
   const handleDelete = async (id: number) => {
     const isConfirmed = await alert.confirmDelete(
-      "Hapus Aset Ini?",
-      "Data aset akan dipindahkan ke riwayat arsip penghapusan."
+      t("assets.feedback.delete_title"),
+      t("assets.feedback.delete_description")
     );
 
     if (isConfirmed) {
       try {
         await deleteAsset(id);
         setIsDetailOpen(false);
-        alert.toast("Aset berhasil dihapus.", "success");
-      } catch (err: any) {
-        alert.error("Gagal Menghapus Aset", err?.response?.data?.message || "Terjadi kesalahan pada server.");
+        alert.toast(t("assets.feedback.deleted"), "success");
+      } catch (err: unknown) {
+        alert.error(t("assets.feedback.delete_failed"), (isAxiosError<{ message?: string }>(err) && err.response?.data?.message) || t("assets.feedback.server_error"));
       }
     }
   };
@@ -209,14 +210,14 @@ export default function AssetsPage() {
   const handleFormSubmit = async (data: Partial<Asset>, imageFile?: File) => {
     try {
       if (selectedAssetForEdit) {
-        await updateAsset({ id: selectedAssetForEdit.id, data });
-        alert.toast("Data aset berhasil diperbarui!", "success");
+        await updateAsset({ id: selectedAssetForEdit.id, data, imageFile });
+        alert.toast(t("assets.feedback.updated"), "success");
       } else {
-        await createAsset(data);
-        alert.toast("Aset baru berhasil ditambahkan!", "success");
+        await createAsset({ ...data, imageFile });
+        alert.toast(t("assets.feedback.created"), "success");
       }
-    } catch (err: any) {
-      alert.error("Gagal Menyimpan Aset", err?.response?.data?.message || "Periksa kembali input form Anda.");
+    } catch (err: unknown) {
+      alert.error(t("assets.feedback.save_failed"), (isAxiosError<{ message?: string }>(err) && err.response?.data?.message) || t("assets.feedback.check_form"));
       throw err;
     }
   };
@@ -225,35 +226,28 @@ export default function AssetsPage() {
     try {
       if (borrowReturnMode === "borrow") {
         await assetService.borrowAsset(id, remark);
-        alert.toast("Peminjaman aset berhasil diajukan!", "success");
+        alert.toast(t("assets.feedback.borrowed"), "success");
       } else {
         await assetService.returnAsset(id, remark);
-        alert.toast("Aset berhasil dikembalikan!", "success");
+        alert.toast(t("assets.feedback.returned"), "success");
       }
       refetch();
-    } catch (err: any) {
-      alert.error("Gagal Memproses Transaksi", err?.response?.data?.message || "Terjadi kesalahan pada server.");
+    } catch (err: unknown) {
+      alert.error(t("assets.feedback.transaction_failed"), (isAxiosError<{ message?: string }>(err) && err.response?.data?.message) || t("assets.feedback.server_error"));
       throw err;
     }
   };
 
   const handleExport = async () => {
     try {
-      alert.toast("Menyiapkan file Excel...", "info");
-      const response = await apiClient.get("/assets/export", {
-        responseType: "blob",
-        params: {
-          q: search || undefined,
-          category: category || undefined,
-          status: status || undefined,
-          location: location || undefined,
-          building: building || undefined,
-          merk: merk || undefined,
-        },
-      });
-
-      const blob = new Blob([response.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      alert.toast(t("assets.feedback.export_preparing"), "info");
+      const blob = await assetService.exportAssets({
+        q: search || undefined,
+        category: category || undefined,
+        status: status || undefined,
+        location: location || undefined,
+        building: building || undefined,
+        merk: merk || undefined,
       });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -264,9 +258,9 @@ export default function AssetsPage() {
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      alert.toast("File Excel berhasil diunduh!", "success");
-    } catch (err: any) {
-      alert.error("Gagal Download", "Terjadi kendala saat mengunduh file Excel.");
+      alert.toast(t("assets.feedback.exported"), "success");
+    } catch {
+      alert.error(t("assets.feedback.export_failed"), t("assets.feedback.export_error"));
     }
   };
 
@@ -289,7 +283,7 @@ export default function AssetsPage() {
         {/* Full Action Toolbar */}
         <div className="flex flex-col lg:flex-row flex-wrap items-stretch lg:items-center justify-between gap-3 mb-4">
           {/* Left: Search Box & Filter Button */}
-          <div className="flex items-center gap-2 flex-1 min-w-[280px] max-w-lg">
+          <div className="flex items-center gap-2 w-full min-w-0 flex-1 max-w-lg">
             <div className="relative flex-1">
               <input
                 type="text"
@@ -306,14 +300,14 @@ export default function AssetsPage() {
               type="button"
               onClick={() => setShowFilters(!showFilters)}
               className={`h-10 px-3 text-xs font-semibold rounded-xl border transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
-                showFilters || category || status || location || merk
+                showFilters || category || status || location || building || merk
                   ? "bg-brand-50 border-brand-200 text-brand-700 dark:bg-brand-900/30 dark:border-brand-800 dark:text-brand-300"
                   : "bg-white border-gray-200 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
               }`}
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>{t("common.filter")}</span>
-              {(category || status || location || merk) && (
+              {(category || status || location || building || merk) && (
                 <span className="w-2 h-2 rounded-full bg-brand-500"></span>
               )}
             </button>

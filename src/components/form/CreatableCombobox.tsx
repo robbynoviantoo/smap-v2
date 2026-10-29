@@ -25,13 +25,9 @@ export default function CreatableCombobox({
 }: CreatableComboboxProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState(value || "");
+  const query = value || "";
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setQuery(value || "");
-  }, [value]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -58,20 +54,17 @@ export default function CreatableCombobox({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
-    setQuery(val);
     onChange(val);
     setIsOpen(true);
   };
 
   const handleSelectOption = (opt: string) => {
-    setQuery(opt);
     onChange(opt);
     setIsOpen(false);
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setQuery("");
     onChange("");
     inputRef.current?.focus();
   };
