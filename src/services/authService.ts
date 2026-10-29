@@ -26,7 +26,12 @@ export const authService = {
   },
 
   async updateProfile(
-    data: Partial<User> & { password?: string; password_confirmation?: string }
+    data: Partial<User> & {
+      password?: string;
+      password_confirmation?: string;
+      current_password?: string;
+      photo_cropped?: string;
+    }
   ) {
     const res = await apiClient.put<ApiResponse<User>>('/profile', data);
     return res.data;

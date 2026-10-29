@@ -23,6 +23,8 @@ export interface User {
   bio?: string;
   avatar?: string;
   avatar_url?: string;
+  image?: string;
+  image_url?: string;
   negara?: string;
   kota?: string;
   kodepos?: string;

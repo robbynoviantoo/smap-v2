@@ -14,12 +14,16 @@ import {
   Save, 
   Loader2, 
   MapPin, 
-  CheckCircle2 
+  CheckCircle2,
+  Camera,
+  Upload
 } from 'lucide-react';
 
 export default function ProfilePage() {
   const { t } = useTranslation();
   const { user, refetchUser } = useAuth();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -48,6 +52,42 @@ export default function ProfilePage() {
       setBio(user.bio || '');
     }
   }, [user]);
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert.error('Pilih file gambar (JPG, PNG, atau WEBP).');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert.error('Ukuran foto maksimal 5 MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result as string;
+      try {
+        setIsUploadingPhoto(true);
+        await authService.updateProfile({
+          photo_cropped: base64,
+        });
+        alert.success('Foto profil berhasil diperbarui!');
+        await refetchUser();
+      } catch (err: any) {
+        alert.error(err?.response?.data?.message || 'Gagal mengunggah foto profil.');
+      } finally {
+        setIsUploadingPhoto(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,10 +154,42 @@ export default function ProfilePage() {
 
       {/* Profile Overview Card */}
       <div className="p-6 bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 flex items-center justify-center font-bold text-2xl uppercase">
-            {fullName.charAt(0) || 'U'}
+        <div className="flex items-center gap-5">
+          <div className="relative group">
+            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-brand-50 dark:bg-brand-900/30 text-brand-600 flex items-center justify-center font-bold text-2xl uppercase border-2 border-brand-500/20 shadow-sm">
+              {user?.image_url ? (
+                <img
+                  src={user.image_url}
+                  alt={fullName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                fullName.charAt(0) || 'U'
+              )}
+            </div>
+
+            <button
+              type="button"
+              disabled={isUploadingPhoto}
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute -bottom-1 -right-1 p-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white shadow-md transition-all cursor-pointer disabled:opacity-50"
+              title="Ganti Foto Profil"
+            >
+              {isUploadingPhoto ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Camera className="w-3.5 h-3.5" />
+              )}
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="hidden"
+            />
           </div>
+
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white">
@@ -138,6 +210,18 @@ export default function ProfilePage() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            disabled={isUploadingPhoto}
+            onClick={() => fileInputRef.current?.click()}
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl transition cursor-pointer"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>{isUploadingPhoto ? 'Mengunggah...' : 'Unggah Foto Baru'}</span>
+          </button>
         </div>
       </div>
 

@@ -30,7 +30,16 @@ export default function UserDropdown() {
 
   const displayName = user ? `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.name : "User";
   const displayEmail = user?.email || "user@smap.com";
-  const avatarUrl = user?.avatar_url || "/images/user/owner.jpg";
+  const avatarUrl = user?.image_url || user?.avatar_url || null;
+  const [imgError, setImgError] = useState(false);
+
+  const initials = displayName
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "U";
 
   return (
     <div className="relative">
@@ -41,17 +50,19 @@ export default function UserDropdown() {
         onClick={toggleDropdown}
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
-        <span className="lg:mr-3 shrink-0 overflow-hidden rounded-full h-11 w-11 relative bg-gray-100 dark:bg-gray-800">
-          <Image
-            width={44}
-            height={44}
-            src={avatarUrl}
-            alt={displayName}
-            className="object-cover h-full w-full"
-            onError={(e) => {
-              e.currentTarget.src = "/images/user/owner.jpg";
-            }}
-          />
+        <span className="lg:mr-3 shrink-0 overflow-hidden rounded-full h-11 w-11 relative bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+          {avatarUrl && !imgError ? (
+            <img
+              src={avatarUrl}
+              alt={displayName}
+              className="object-cover h-full w-full rounded-full"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-brand-600 text-white font-bold text-sm select-none shadow-xs">
+              {initials}
+            </span>
+          )}
         </span>
 
         <span className="hidden max-w-32 truncate lg:block mr-1 font-medium text-theme-sm">{user?.first_name || user?.name || "User"}</span>
