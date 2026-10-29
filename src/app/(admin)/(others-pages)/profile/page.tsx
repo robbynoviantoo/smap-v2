@@ -72,7 +72,13 @@ export default function ProfilePage() {
       const base64 = reader.result as string;
       try {
         setIsUploadingPhoto(true);
+        const userEmail = email || user?.email;
+        if (!userEmail) {
+          alert.error('Email pengguna tidak ditemukan.');
+          return;
+        }
         await authService.updateProfile({
+          email: userEmail,
           photo_cropped: base64,
         });
         alert.success('Foto profil berhasil diperbarui!');
@@ -96,9 +102,16 @@ export default function ProfilePage() {
       return;
     }
 
+    const userEmail = email || user?.email;
+    if (!userEmail) {
+      alert.error('Email pengguna wajib diisi!');
+      return;
+    }
+
     try {
       setIsSavingProfile(true);
       await authService.updateProfile({
+        email: userEmail,
         first_name: firstName,
         last_name: lastName,
         no_handphone: noHandphone,
@@ -109,7 +122,7 @@ export default function ProfilePage() {
       alert.success('Profil pengguna berhasil diperbarui!');
       refetchUser();
     } catch (err: any) {
-      alert.error(err.response?.data?.message || 'Gagal memperbarui profil.');
+      alert.error(err?.response?.data?.message || 'Gagal memperbarui profil.');
     } finally {
       setIsSavingProfile(false);
     }
@@ -117,14 +130,26 @@ export default function ProfilePage() {
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentPassword) {
+      alert.error('Password saat ini wajib diisi!');
+      return;
+    }
     if (!newPassword || newPassword !== newPasswordConfirmation) {
       alert.error('Konfirmasi password baru tidak cocok!');
+      return;
+    }
+
+    const userEmail = email || user?.email;
+    if (!userEmail) {
+      alert.error('Email pengguna tidak ditemukan!');
       return;
     }
 
     try {
       setIsSavingPassword(true);
       await authService.updateProfile({
+        email: userEmail,
+        current_password: currentPassword,
         password: newPassword,
         password_confirmation: newPasswordConfirmation,
       });
@@ -133,7 +158,7 @@ export default function ProfilePage() {
       setNewPassword('');
       setNewPasswordConfirmation('');
     } catch (err: any) {
-      alert.error(err.response?.data?.message || 'Gagal mengubah password.');
+      alert.error(err?.response?.data?.message || 'Gagal mengubah password.');
     } finally {
       setIsSavingPassword(false);
     }
@@ -355,6 +380,20 @@ export default function ProfilePage() {
         </div>
 
         <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-lg">
+          <div>
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+              Password Saat Ini <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="password"
+              required
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              placeholder="Masukkan password saat ini"
+              className="w-full mt-1.5 px-3.5 py-2 text-xs rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+            />
+          </div>
+
           <div>
             <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
               Password Baru <span className="text-red-500">*</span>
