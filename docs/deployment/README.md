@@ -94,3 +94,7 @@ pada perangkat penguji. Uji foreground, background, klik route, logout, dan dua
 perangkat dengan akun yang sama. Tes fixture lokal belum membuktikan FCM delivery
 atau kebijakan browser pada HP fisik. Jangan gunakan broadcast semua pengguna
 untuk pengujian awal.
+
+## GitHub Actions
+
+Panduan setup VPS, PM2 dan secrets repo Next tersedia di [github-actions.md](github-actions.md).

@@ -1,0 +1,52 @@
+name: Deploy SMAP V2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-smap-v2-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Deploy Next.js to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || '22' }}
+          command_timeout: 25m
+          script: |
+            set -eu
+            cd /var/www/smap-v2
+
+            export NVM_DIR="$HOME/.nvm"
+            test -s "$NVM_DIR/nvm.sh" || { echo "NVM belum tersedia untuk user SSH."; exit 1; }
+            . "$NVM_DIR/nvm.sh"
+            nvm use 24
+            command -v pm2 >/dev/null || { echo "Instal PM2: npm install -g pm2"; exit 1; }
+            test -f .env.local || { echo "Siapkan .env.local produksi sebelum deploy."; exit 1; }
+            test "$(git branch --show-current)" = main || { echo "Checkout server harus memakai branch main."; exit 1; }
+            test -z "$(git status --porcelain)" || { echo "Ada perubahan lokal di checkout server. Simpan sebelum deploy."; exit 1; }
+
+            echo "Pull source"
+            git pull --ff-only origin main
+
+            echo "Install dependencies and build"
+            npm ci --include=dev
+            npm run build
+
+            echo "Start or restart Next.js"
+            pm2 startOrRestart ecosystem.config.cjs --only smap-v2 --update-env
+            curl --fail --silent --show-error --retry 10 --retry-connrefused --retry-delay 2 http://127.0.0.1:3000/signin >/dev/null
+            pm2 save
