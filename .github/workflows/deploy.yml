@@ -47,7 +47,10 @@ jobs:
             npm ci --include=dev
             npm run build
 
-            echo "Start or restart Next.js"
+            echo "Start or restart Next.js and Reverb"
             pm2 startOrRestart ecosystem.config.cjs --only smap-v2 --update-env
+            if [ -d "/var/www/smap" ]; then
+              pm2 startOrRestart ecosystem.config.cjs --only smap-reverb --update-env || true
+            fi
             curl --fail --silent --show-error --retry 10 --retry-connrefused --retry-delay 2 http://127.0.0.1:3000/signin >/dev/null
             pm2 save
