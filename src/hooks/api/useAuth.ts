@@ -29,11 +29,13 @@ export function useAuth() {
     onSuccess: (data) => {
       queryClient.setQueryData(['auth', 'me'], { success: true, message: 'OK', data: data.data.user });
       
-      // Jika user baru pertama kali login, arahkan ke halaman onboarding (ganti password)
-      if (data.data.user?.is_first_login) {
-        router.push('/onboarding');
+      const targetUrl = data.data.user?.is_first_login ? '/onboarding' : '/';
+      // Gunakan window.location.replace agar membersihkan client-side router cache Next.js,
+      // sehingga browser langsung beralih ke halaman dashboard pada klik pertama tanpa jeda/stuck.
+      if (typeof window !== 'undefined') {
+        window.location.replace(targetUrl);
       } else {
-        router.push('/');
+        router.push(targetUrl);
       }
     },
   });

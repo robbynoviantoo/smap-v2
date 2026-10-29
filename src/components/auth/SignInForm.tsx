@@ -15,6 +15,7 @@ export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { login, isLoggingIn } = useAuth();
 
@@ -27,13 +28,16 @@ export default function SignInForm() {
       return;
     }
 
+    setIsRedirecting(true);
     try {
       await login({
         email,
         password,
         device_name: "nextjs-web",
       });
+      // Sukses: biarkan isRedirecting tetap true agar tombol tetap menampilkan state loading saat halaman berpindah
     } catch (err: any) {
+      setIsRedirecting(false);
       const msg =
         err?.response?.data?.message ||
         err?.response?.data?.errors?.email?.[0] ||
@@ -47,6 +51,7 @@ export default function SignInForm() {
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
         <Link
           href="/"
+          prefetch={false}
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
           <ChevronLeftIcon />
@@ -124,8 +129,8 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm" disabled={isLoggingIn}>
-                    {isLoggingIn ? "Signing in..." : "Sign in"}
+                  <Button className="w-full" size="sm" disabled={isLoggingIn || isRedirecting}>
+                    {isLoggingIn || isRedirecting ? "Signing in..." : "Sign in"}
                   </Button>
                 </div>
               </div>
