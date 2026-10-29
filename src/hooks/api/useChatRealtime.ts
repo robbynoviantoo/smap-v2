@@ -29,13 +29,14 @@ export function ChatRealtimeProvider({ children }: { children: ReactNode }) {
 
     const secure = process.env.NEXT_PUBLIC_REVERB_SCHEME === 'https';
     const port = Number(process.env.NEXT_PUBLIC_REVERB_PORT || (secure ? 443 : 8080));
+    const host = (typeof window !== 'undefined' && window.location.hostname) || process.env.NEXT_PUBLIC_REVERB_HOST;
     const client = new Pusher(key, {
       cluster: 'mt1',
-      wsHost: process.env.NEXT_PUBLIC_REVERB_HOST || window.location.hostname,
+      wsHost: host,
       wsPort: port,
       wssPort: port,
       forceTLS: secure,
-      enabledTransports: secure ? ['wss'] : ['ws', 'wss'],
+      enabledTransports: ['ws', 'wss'],
       disableStats: true,
       channelAuthorization: {
         customHandler: ({ socketId, channelName }, callback) => {
