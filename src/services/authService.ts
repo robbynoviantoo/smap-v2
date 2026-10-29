@@ -1,6 +1,7 @@
 import apiClient from '@/lib/api-client';
 import { ApiResponse, LoginResponse, User } from '@/types/api';
 import Cookies from 'js-cookie';
+import { storedPushToken, clearPushSubscription } from './pushService';
 
 export const authService = {
   async login(credentials: { email: string; password: string; device_name?: string }) {
@@ -43,8 +44,11 @@ export const authService = {
   },
 
   async logout() {
+    await apiClient.post('/auth/logout', { fcm_token: storedPushToken() });
     try {
-      await apiClient.post('/auth/logout');
+      await clearPushSubscription();
+    } catch {
+      // The API has already detached the device; local cleanup may fail while offline.
     } finally {
       Cookies.remove('token', { path: '/' });
       if (typeof window !== 'undefined') {

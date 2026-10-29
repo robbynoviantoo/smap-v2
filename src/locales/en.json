@@ -1257,5 +1257,16 @@
     "online": "Online",
     "offline": "Offline",
     "unavailable": "Status unavailable"
+  },
+  "push": {
+    "title": "Device notifications",
+    "available": "Enable notifications to receive updates when the app is closed.",
+    "unsupported": "Notifications are unavailable in this browser. On iPhone, open the app from your Home Screen.",
+    "unconfigured": "Notification configuration is missing. Contact the app administrator.",
+    "denied": "Notifications are blocked. Change site permissions in your browser or device settings.",
+    "enabling": "Connecting device notifications…",
+    "error": "Notifications are not connected. Check your connection and try again.",
+    "enable": "Enable notifications",
+    "retry": "Try again"
   }
 }

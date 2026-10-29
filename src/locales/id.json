@@ -1086,5 +1086,16 @@
     "online": "Online",
     "offline": "Offline",
     "unavailable": "Status tidak tersedia"
+  },
+  "push": {
+    "title": "Notifikasi perangkat",
+    "available": "Aktifkan untuk menerima pembaruan meskipun aplikasi tidak sedang dibuka.",
+    "unsupported": "Notifikasi belum didukung di browser ini. Di iPhone, buka aplikasi dari Layar Utama.",
+    "unconfigured": "Konfigurasi notifikasi belum tersedia. Hubungi pengelola aplikasi.",
+    "denied": "Izin notifikasi diblokir. Ubah izin situs melalui pengaturan browser atau perangkat.",
+    "enabling": "Menghubungkan notifikasi perangkat…",
+    "error": "Notifikasi belum terhubung. Periksa koneksi lalu coba lagi.",
+    "enable": "Aktifkan notifikasi",
+    "retry": "Coba lagi"
   }
 }

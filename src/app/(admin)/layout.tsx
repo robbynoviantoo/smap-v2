@@ -7,6 +7,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
+import PushNotifications from "@/components/notifications/PushNotifications";
 import { ChatRealtimeProvider } from "@/hooks/api/useChatRealtime";
 
 export default function AdminLayout({
@@ -66,7 +67,7 @@ export default function AdminLayout({
         {/* Header */}
         <AppHeader />
         {/* Page Content */}
-        <main className="min-w-0 p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</main>
+        <main className="min-w-0 p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6"><PushNotifications />{children}</main>
       </div>
     </div>
     </ChatRealtimeProvider>

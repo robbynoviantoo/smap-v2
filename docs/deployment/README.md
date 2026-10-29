@@ -83,3 +83,14 @@ di bawah process manager dan proxy HTTPS. Jangan build memakai env localhost.
 - Kredensial yang sudah dibagikan perlu dirotasi melalui penyedianya. APP_KEY
   memerlukan rencana terpisah karena berpengaruh pada data terenkripsi, cookie
   dan kredensial VPS tersimpan; jangan menggantinya saat memindahkan source.
+
+## Notifikasi PWA
+
+Isi seluruh NEXT_PUBLIC_FIREBASE_* termasuk VAPID_KEY pada template Next sebelum
+build. Project harus sesuai service account server dan FcmHelper (smap-pertamina).
+Simpan service-account JSON secara privat di storage/app/firebase-auth.json Laravel;
+jangan taruh di public atau repository. Gunakan login dan tombol Aktifkan notifikasi
+pada perangkat penguji. Uji foreground, background, klik route, logout, dan dua
+perangkat dengan akun yang sama. Tes fixture lokal belum membuktikan FCM delivery
+atau kebijakan browser pada HP fisik. Jangan gunakan broadcast semua pengguna
+untuk pengujian awal.

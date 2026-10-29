@@ -9,7 +9,10 @@ import PwaProvider from '@/providers/PwaProvider';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
-  title: "SMAP — PERTAMINA HSE Training Center",
+  title: {
+    default: "SMAP | Pertamina HSE Training Center",
+    template: "%s | Pertamina HSE Training Center",
+  },
   description: "Sistem Manajemen Aset & Penunjang PERTAMINA",
   manifest: "/manifest.json",
   icons: {
